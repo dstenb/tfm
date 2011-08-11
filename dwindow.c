@@ -20,9 +20,9 @@ dwindow_clear(dwindow *dwin)
 
 	dwin->size = 0;
 	dwin->sel.p = NULL;
-	dwin->sel.i = -1;
+	dwin->sel.i = 0;
 	dwin->start.p = NULL;
-	dwin->sel.i = -1;
+	dwin->sel.i = 0;
 
 	finfo_free(dwin->dirinfo);
 	free(dwin->path);

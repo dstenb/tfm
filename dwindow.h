@@ -7,6 +7,8 @@
 #include "finfo.h"
 #include "utils.h"
 
+#define has_selected_file(x) (x->sel.p)
+
 typedef size_t pos_t;
 
 typedef enum {

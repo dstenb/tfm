@@ -15,7 +15,9 @@
 typedef enum {
 	C_TOPBAR = 1,
 	C_FILEBAR,
-	C_BOTTOMBAR,
+	C_INFO,
+	C_WARNING,
+	C_ERROR,
 	C_FILE,
 	C_DIRECTORY,
 	C_SYMLINK,

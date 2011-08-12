@@ -21,6 +21,7 @@ static int get_attr(const finfo *fp);
 static char *get_conf_dir();
 static void handle_resize();
 static void main_loop();
+static void print_bottombar(int y);
 static void print_file(const finfo *fp, int y, int selected);
 static void print_filebar(const finfo *fp, int y);
 static void *update_loop(void *v);
@@ -70,8 +71,8 @@ void draw(const char *topbar)
 
 		print_filebar(data.wsel->sel.p, y - 2);
 		states_setbuf(&data);
-		ui_printline(stdscr, y - 1, COLOR_PAIR(C_BOTTOMBAR),
-				"%s", data.buf);
+		print_bottombar(y - 1);
+
 	}
 
 	refresh();
@@ -133,6 +134,21 @@ main_loop()
 		g_i = i; /* TODO */
 		states_handlekey(&data, i);
 	}
+}
+
+void
+print_bottombar(int y)
+{
+	int attr;
+
+	if (data.buftype == M_WARNING)
+		attr = COLOR_PAIR(C_WARNING) | A_BOLD;
+	else if (data.buftype == M_ERROR)
+		attr = COLOR_PAIR(C_ERROR) | A_BOLD;
+	else
+		attr = COLOR_PAIR(C_INFO);
+
+	ui_printline(stdscr, y, attr, "%s", data.buf);
 }
 
 void

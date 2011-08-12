@@ -9,7 +9,9 @@ struct {
 } c_identifiers[] = {
 	{ "topbar", C_TOPBAR },
 	{ "filebar", C_FILEBAR },
-	{ "bottombar", C_BOTTOMBAR },
+	{ "info", C_INFO },
+	{ "warning", C_WARNING },
+	{ "error", C_ERROR },
 	{ "file", C_FILE },
 	{ "directory", C_DIRECTORY },
 	{ "symlink", C_SYMLINK },
@@ -78,13 +80,15 @@ parse_line(char *line, int *id, int *fg, int *bg)
 void
 theme_init_default()
 {
-	init_pair(C_TOPBAR,    COLOR_WHITE, COLOR_DEFAULT);
-	init_pair(C_FILEBAR,   COLOR_BLACK, COLOR_WHITE);
-	init_pair(C_BOTTOMBAR, COLOR_WHITE, COLOR_DEFAULT);
-	init_pair(C_FILE,      COLOR_WHITE, COLOR_DEFAULT);
-	init_pair(C_DIRECTORY, COLOR_BLUE,  COLOR_DEFAULT);
-	init_pair(C_SYMLINK,   COLOR_GREEN, COLOR_DEFAULT);
-	init_pair(C_SELECTED,  COLOR_WHITE, COLOR_BLUE);
+	init_pair(C_TOPBAR,    COLOR_WHITE,  COLOR_DEFAULT);
+	init_pair(C_FILEBAR,   COLOR_BLACK,  COLOR_WHITE);
+	init_pair(C_INFO,      COLOR_WHITE,  COLOR_DEFAULT);
+	init_pair(C_WARNING,   COLOR_YELLOW, COLOR_DEFAULT);
+	init_pair(C_ERROR,     COLOR_RED,    COLOR_DEFAULT);
+	init_pair(C_FILE,      COLOR_WHITE,  COLOR_DEFAULT);
+	init_pair(C_DIRECTORY, COLOR_BLUE,   COLOR_DEFAULT);
+	init_pair(C_SYMLINK,   COLOR_GREEN,  COLOR_DEFAULT);
+	init_pair(C_SELECTED,  COLOR_WHITE,  COLOR_BLUE);
 }
 
 int

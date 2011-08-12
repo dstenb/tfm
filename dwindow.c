@@ -45,7 +45,7 @@ dwindow_fix_bounds(dwindow *dwin)
 	if (!(has_selected_file(dwin)))
 		return;
 
-	while((dwin->sel.i - dwin->start.i) >=  dwin->winsize && dwin->start.p->next) {
+	while((int)(dwin->sel.i - dwin->start.i) >=  dwin->winsize && dwin->start.p->next) {
 		dwin->start.p = dwin->start.p->next;
 		dwin->start.i++;
 	}
@@ -178,6 +178,23 @@ dwindow_set_selected_by_name(dwindow *dwin, const char *name)
 }
 
 void
+dwindow_set_sort(dwindow *dwin, int sort)
+{
+	if (sort >= 0 && sort < N_SORTMETHODS) {
+		dwin->sort = sort;
+
+		if (sort == BY_SIZE)
+			dwin->cmp = finfocmp_size;
+		else if (sort == BY_MTIME)
+			dwin->cmp = finfocmp_mtime;
+		else
+			dwin->cmp = finfocmp_name;
+
+		dwindow_sort(dwin);
+	}
+}
+
+void
 dwindow_set_winsize(dwindow *dwin, int winsize)
 {
 	dwin->winsize = winsize;
@@ -197,6 +214,8 @@ dwindow_sort(dwindow *dwin)
 	} else {
 		dwin->files = mergesort(dwin->files, dwin->cmp);
 	}
+
+	dwindow_fix_bounds(dwin);
 }
 
 int
@@ -249,4 +268,19 @@ mergesort(finfo *head, finfocmp *cmp)
 	head->next = NULL;
 
 	return merge(mergesort(a, cmp), mergesort(b, cmp), cmp);
+}
+
+const char *
+strsort(int sort)
+{
+	switch(sort) {
+	case BY_NAME:
+		return "name";
+	case BY_SIZE:
+		return "size";
+	case BY_MTIME:
+		return "modify time";
+	default:
+		return NULL;
+	}
 }

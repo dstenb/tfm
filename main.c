@@ -17,7 +17,7 @@
 #include "utils.h"
 
 static void atexit_handler();
-static void draw(const char *topbar);
+static void draw();
 static int get_attr(const finfo *fp);
 static char *get_conf_dir();
 static void handle_resize();
@@ -30,8 +30,6 @@ static void usage();
 static char *cmdname = NULL;
 static wdata_t data;
 
-static int g_i = 0; /* TODO */
-
 void
 atexit_handler()
 {
@@ -41,7 +39,8 @@ atexit_handler()
 	dwindow_free(data.win[1]);
 }
 
-void draw(const char *topbar)
+void
+draw()
 {
 	int i;
 	int y, x;
@@ -53,9 +52,8 @@ void draw(const char *topbar)
 	erase();
 	ui_printline(stdscr, 0, 
 			A_BOLD | COLOR_PAIR(C_TOPBAR), 
-			"%s (%i / %i): %s (%i)", data.wsel ? data.wsel->path : "", 
-			data.wsel->sel.i + 1, data.wsel->size,
-			topbar, g_i);
+			"%s (%i / %i)", data.wsel ? data.wsel->path : "", 
+			data.wsel->sel.i + 1, data.wsel->size);
 
 	if (data.wsel && data.wsel->sel.p) {
 
@@ -70,10 +68,9 @@ void draw(const char *topbar)
 		}
 
 		print_filebar(data.wsel->sel.p, y - 2);
-		print_message(y - 1);
-
 	}
 
+	print_message(y - 1);
 	refresh();
 }
 
@@ -124,13 +121,13 @@ main_loop()
 	handle_resize();
 
 	for (;;) {
-		draw("Main loop");
+		draw();
 		i = ui_getchar();
 
 		if (i == KEY_RESIZE) {
 			handle_resize();
 		}
-		g_i = i; /* TODO */
+		
 		states_handlekey(&data, i);
 	}
 }
@@ -212,7 +209,7 @@ main(int argc, char **argv)
 	/* setup windows */
 	for (i = 0; i < 2; i++) {
 		data.win[i] = dwindow_create();
-		data.win[i]->cmp = finfocmp_name;
+		dwindow_set_sort(data.win[i], BY_NAME);
 		dwindow_read(data.win[i], paths[i]);
 	}
 

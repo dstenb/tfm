@@ -63,4 +63,6 @@ void dwindow_set_winsize(dwindow *dwin, int winsize);
 /* sorts the files */
 void dwindow_sort(dwindow *dwin);
 
+const char *strsort(int sort);
+
 #endif

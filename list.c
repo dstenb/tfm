@@ -7,6 +7,7 @@ static void cmd_chwin(wdata_t *data);
 static void cmd_go_down(wdata_t *data);
 static void cmd_go_up(wdata_t *data);
 static void cmd_previous_dir(wdata_t *data);
+static void cmd_toggle_sort(wdata_t *data);
 
 void
 activate()
@@ -69,6 +70,15 @@ cmd_previous_dir(wdata_t *data)
 	}
 }
 
+void
+cmd_toggle_sort(wdata_t *data)
+{
+	dwindow *dwin = data->wsel;
+
+	dwindow_set_sort(dwin, (dwin->sort + 1) % N_SORTMETHODS);
+	set_message(M_INFO, "sorted by: %s", strsort(dwin->sort)); 
+	dwindow_set_selected(dwin, 0);
+}
 
 state *
 list_state()
@@ -94,6 +104,8 @@ list_handle_key(wdata_t *data, int c)
 		states_push(search_state());
  */	} else if (c == 'u') {
 		cmd_previous_dir(data);
+ 	} else if (c == 's') {
+		cmd_toggle_sort(data);
 	} else if (has_selected_file(data->wsel)) {
 		if (c == 13) {
 			cmd_action(data);

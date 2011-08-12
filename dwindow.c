@@ -1,6 +1,7 @@
 #include "dwindow.h"
 
 static void dwindow_clear(dwindow *dwin);
+static void dwindow_prepend(dwindow *dwin, finfo *fp);
 static void dwindow_read_files(dwindow *dwin, DIR *dir);
 
 static int finfo_cmp(finfo *a, finfo *b, finfocmp *cmp);
@@ -47,6 +48,17 @@ dwindow_free(dwindow *dwin)
 	}
 }
 
+void
+dwindow_prepend(dwindow *dwin, finfo *fp)
+{
+	fp->next = dwin->files;
+
+	if (dwin->files)
+		dwin->files->prev = fp;
+	dwin->files = fp;
+	dwin->size++;
+}
+
 int
 dwindow_read(dwindow *dwin, const char *path)
 {
@@ -76,11 +88,7 @@ dwindow_read(dwindow *dwin, const char *path)
 		fp = finfo_create(dwin->path, "..");
 
 		if (finfo_stat(fp) == 0) {
-			fp->next = dwin->files;
-			if (dwin->files)
-				dwin->files->prev = fp;
-			dwin->files = fp;
-			dwin->size++;
+			dwindow_prepend(dwin, fp);
 		} else {
 			finfo_free(fp);
 		}
@@ -111,13 +119,8 @@ dwindow_read_files(dwindow *dwin, DIR *dir)
 			fp = finfo_create(dwin->path, de->d_name);
 
 			if (finfo_stat(fp) == 0) {
-				fp->next = dwin->files;
-				if (dwin->files)
-					dwin->files->prev = fp;
-				dwin->files = fp;
-				dwin->size++;
+				dwindow_prepend(dwin, fp);
 			} else {
-				/* TODO: handle errors */
 				finfo_free(fp);
 			}
 		}

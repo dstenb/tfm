@@ -28,6 +28,7 @@ struct finfo
 	gid_t gid;
 	off_t size;
 	time_t mtime;
+	finfo *prev;
 	finfo *next;
 };
 

@@ -77,6 +77,8 @@ dwindow_read(dwindow *dwin, const char *path)
 
 		if (finfo_stat(fp) == 0) {
 			fp->next = dwin->files;
+			if (dwin->files)
+				dwin->files->prev = fp;
 			dwin->files = fp;
 			dwin->size++;
 		} else {
@@ -110,6 +112,8 @@ dwindow_read_files(dwindow *dwin, DIR *dir)
 
 			if (finfo_stat(fp) == 0) {
 				fp->next = dwin->files;
+				if (dwin->files)
+					dwin->files->prev = fp;
 				dwin->files = fp;
 				dwin->size++;
 			} else {
@@ -168,10 +172,13 @@ dwindow_sort(dwindow *dwin)
 	if (!dwin || !dwin->files || !dwin->files->next || !dwin->cmp)
 		return;
 
-	if (streq(dwin->files->name, ".."))
+	/* skip sorting '..' finfo struct if present */
+	if (streq(dwin->files->name, "..")) {
 		dwin->files->next = mergesort(dwin->files->next, dwin->cmp);
-	else
+		dwin->files->next->prev = dwin->files;	
+	} else {
 		dwin->files = mergesort(dwin->files, dwin->cmp);
+	}
 }
 
 int
@@ -199,6 +206,7 @@ merge(finfo *a, finfo *b, finfocmp *cmp)
 		res->next = merge(a, b->next, cmp);
 	}
 
+	res->next->prev = res;
 	return res;
 }
 

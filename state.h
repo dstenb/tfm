@@ -13,7 +13,7 @@
 
 typedef struct {
 	void (*keycmd) (wdata_t *data, int c);
-	void (*set_buf) (wdata_t *data);
+	void (*activate) ();
 	int normal_bindings;
 } state;
 
@@ -22,8 +22,6 @@ void states_clear();
 
 /* handle key event for current state */
 void states_handlekey(wdata_t *data, int c);
-
-void states_setbuf(wdata_t *data);
 
 /* remove current satte */
 void states_pop();

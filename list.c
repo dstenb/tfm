@@ -1,10 +1,18 @@
 #include "list.h"
 
+static void activate();
+
 static void cmd_action(wdata_t *data);
 static void cmd_chwin(wdata_t *data);
 static void cmd_go_down(wdata_t *data);
 static void cmd_go_up(wdata_t *data);
 static void cmd_previous_dir(wdata_t *data);
+
+void
+activate()
+{
+	set_message(M_INFO, "");
+}
 
 void
 cmd_action(wdata_t *data)
@@ -49,7 +57,7 @@ cmd_previous_dir(wdata_t *data)
 
 	*name = '\0';
 
-	if (data->wsel && !streq(data->wsel->path, "/")) {
+	if (!streq(data->wsel->path, "/")) {
 		snprintf(newpath, sizeof(newpath), "%s", data->wsel->path);
 		prevdir(newpath);
 
@@ -62,27 +70,31 @@ cmd_previous_dir(wdata_t *data)
 }
 
 
-state *list_state()
+state *
+list_state()
 {
 	state *s;
 	
 	if (!(s = malloc(sizeof(state))))
 		oom();
 	s->keycmd = list_handle_key;
-	s->set_buf = list_set_buf;
+	s->activate = activate;
 	s->normal_bindings = 1;
 	return s;
 }
 
-void list_handle_key(wdata_t *data, int c)
+void
+list_handle_key(wdata_t *data, int c)
 {
 	if (c == 't') {
 		cmd_chwin(data);
 	} else if (c == ':') {
-		states_push(cmd_state());	
- 	} else if (c == 'u') {
+		states_push(cmd_state());
+/*	} else if (c == '/') {
+		states_push(search_state());
+ */	} else if (c == 'u') {
 		cmd_previous_dir(data);
-	} else if (data->wsel && data->wsel->sel.p) {
+	} else if (has_selected_file(data->wsel)) {
 		if (c == 13) {
 			cmd_action(data);
 		} else if (c == 'j' || c == 258) {
@@ -96,11 +108,3 @@ void list_handle_key(wdata_t *data, int c)
 		}
 	}
 }
-
-void
-list_set_buf(wdata_t *data)
-{
-	*data->buf = '\0';
-}
-
-

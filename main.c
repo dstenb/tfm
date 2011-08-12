@@ -10,6 +10,7 @@
 
 #include "dwindow.h"
 #include "list.h"
+#include "message.h"
 #include "state.h"
 #include "theme.h"
 #include "ui.h"
@@ -21,7 +22,6 @@ static int get_attr(const finfo *fp);
 static char *get_conf_dir();
 static void handle_resize();
 static void main_loop();
-static void print_bottombar(int y);
 static void print_file(const finfo *fp, int y, int selected);
 static void print_filebar(const finfo *fp, int y);
 static void *update_loop(void *v);
@@ -70,8 +70,7 @@ void draw(const char *topbar)
 		}
 
 		print_filebar(data.wsel->sel.p, y - 2);
-		states_setbuf(&data);
-		print_bottombar(y - 1);
+		print_message(y - 1);
 
 	}
 
@@ -134,21 +133,6 @@ main_loop()
 		g_i = i; /* TODO */
 		states_handlekey(&data, i);
 	}
-}
-
-void
-print_bottombar(int y)
-{
-	int attr;
-
-	if (data.buftype == M_WARNING)
-		attr = COLOR_PAIR(C_WARNING) | A_BOLD;
-	else if (data.buftype == M_ERROR)
-		attr = COLOR_PAIR(C_ERROR) | A_BOLD;
-	else
-		attr = COLOR_PAIR(C_INFO);
-
-	ui_printline(stdscr, y, attr, "%s", data.buf);
 }
 
 void
@@ -233,10 +217,6 @@ main(int argc, char **argv)
 	}
 
 	data.wsel = data.win[0];
-
-	data.buf = calloc(100, sizeof(char));
-	data.bufsize = 100;
-	*data.buf = '\0';
 
 	if (pthread_create(&u_tid, NULL, update_loop, NULL) != 0)
 		die("pthread_create: %s\n", strerror(errno));

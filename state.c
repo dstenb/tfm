@@ -75,6 +75,9 @@ states_pop()
 	tmp = c_node;
 	c_node = c_node->prev;
 	snode_free(tmp);
+
+	if (c_node && c_node->state->activate)
+		c_node->state->activate();
 }
 
 void
@@ -82,14 +85,7 @@ states_push(state *s)
 {
 	assert(s);
 	c_node = snode_create(s, c_node, NULL);
-}
-
-void
-states_setbuf(wdata_t *data)
-{
-	if (!c_node)
-		return;
-
-	if (c_node->state->set_buf)
-		c_node->state->set_buf(data);
+	
+	if (s->activate)
+		s->activate();
 }

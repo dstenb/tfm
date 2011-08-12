@@ -39,6 +39,8 @@ typedef struct {
 /* create a dwindow struct */
 dwindow *dwindow_create();
 
+void dwindow_fix_bounds(dwindow *dwin);
+
 /* free a dwindow struct, and all it's data */
 void dwindow_free(dwindow *dwin);
 
@@ -53,6 +55,8 @@ int dwindow_set_selected_by_name(dwindow *dwin, const char *name);
 
 /* set sort method (and then sort) */
 void dwindow_set_sort(dwindow *dwin, int sort);
+
+void dwindow_set_winsize(dwindow *dwin, int winsize);
 
 /* sorts the files */
 void dwindow_sort(dwindow *dwin);

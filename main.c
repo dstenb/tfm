@@ -112,7 +112,7 @@ void handle_resize()
 	getmaxyx(stdscr, y, x);
 
 	for (i = 0; i < 2; i++) {
-		data.win[i]->winsize = y - 3;
+		dwindow_set_winsize(data.win[i], y - 3);
 	}
 }
 

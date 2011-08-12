@@ -40,6 +40,23 @@ dwindow_create()
 }
 
 void
+dwindow_fix_bounds(dwindow *dwin)
+{
+	if (!(has_selected_file(dwin)))
+		return;
+
+	while((dwin->sel.i - dwin->start.i) >=  dwin->winsize && dwin->start.p->next) {
+		dwin->start.p = dwin->start.p->next;
+		dwin->start.i++;
+	}
+
+	if (dwin->sel.i < dwin->start.i) {
+		dwin->start.p = dwin->sel.p;
+		dwin->start.i = dwin->sel.i;
+	}
+}
+
+void
 dwindow_free(dwindow *dwin)
 {
 	if (dwin) {
@@ -141,16 +158,7 @@ dwindow_set_selected(dwindow *dwin, pos_t pos)
 	dwin->sel.p = t;
 	dwin->sel.i = i;
 
-	while((dwin->sel.i - dwin->start.i) >=  dwin->winsize && dwin->start.p->next) {
-		dwin->start.p = dwin->start.p->next;
-		dwin->start.i++;
-	}
-
-	if (dwin->sel.i < dwin->start.i) {
-		dwin->start.p = dwin->sel.p;
-		dwin->start.i = dwin->sel.i;
-	}
-
+	dwindow_fix_bounds(dwin);
 }
 
 int
@@ -167,6 +175,13 @@ dwindow_set_selected_by_name(dwindow *dwin, const char *name)
 	}
 
 	return 0;
+}
+
+void
+dwindow_set_winsize(dwindow *dwin, int winsize)
+{
+	dwin->winsize = winsize;
+	dwindow_fix_bounds(dwin);
 }
 
 void

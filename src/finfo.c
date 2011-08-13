@@ -40,7 +40,7 @@ finfo_stat(finfo *fp)
 {
 	struct stat st;
 
-	if ((stat(fp->path, &st)) != 0)
+	if ((lstat(fp->path, &st)) != 0)
 		return errno;
 
 	fp->perms.u = (st.st_mode >> 6) & 7;

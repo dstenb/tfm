@@ -221,15 +221,15 @@ main(int argc, char **argv)
 	if (pthread_create(&u_tid, NULL, update_loop, NULL) != 0)
 		die("pthread_create: %s\n", strerror(errno));
 
-	/* setup ui */
-	ui_init();
-	theme_init_default();
-
 	if ((confdir = get_conf_dir())) {
 		chdir(confdir);
 		theme_read_from_file("theme");
 		free(confdir);
 	}
+
+	/* setup ui */
+	ui_init();
+	theme_init();
 
 	states_push(list_state());
 	main_loop();

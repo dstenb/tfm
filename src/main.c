@@ -80,9 +80,9 @@ draw()
 int
 get_attr(const finfo *fp)
 {
-	if (fp->flags & DIRECTORY)
+	if (F_ISDIR(fp))
 		return COLOR_PAIR(C_DIRECTORY);
-	else if (fp->flags & SYMLINK)
+	if (F_ISLNK(fp))
 		return COLOR_PAIR(C_SYMLINK);
 	else
 		return COLOR_PAIR(C_FILE);

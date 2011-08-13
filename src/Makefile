@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -O2 -pedantic -Wextra -ansi -D_GNU_SOURCE
+CFLAGS = -std=c99 -Wall -O2 -pedantic -Wextra -D_GNU_SOURCE
 CC_COMPILE = $(CC) $(CFLAGS) -c
 
 OBJFILES := $(patsubst %.c,%.o,$(wildcard *.c))

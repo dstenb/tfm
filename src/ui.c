@@ -28,7 +28,28 @@ ui_getchar()
 	return getch();
 }
 
-void ui_printline(WINDOW *win, int y, int attr, const char *fmt, ...)
+void
+ui_print(WINDOW *win, int y, int x, int l, int attr, const char *fmt, ...)
+{
+	va_list val;
+	char buf[l + 1];
+	int i;
+	
+	va_start(val, fmt);
+	
+	for (i = vsnprintf(buf, l, fmt, val); i < l; i++)
+		buf[i] = ' ';
+	buf[l] = '\0';
+
+	wattron(win, attr);
+	mvwprintw(win, y, x, buf);
+	wattroff(win, attr);
+
+	va_end(val);
+}
+
+void
+ui_printline(WINDOW *win, int y, int attr, const char *fmt, ...)
 {
 	va_list val;
 	char *buf;
@@ -43,11 +64,12 @@ void ui_printline(WINDOW *win, int y, int attr, const char *fmt, ...)
 
 	va_start(val, fmt);
 
-	if (!(buf = calloc(win_x + 1, sizeof(char))))
+	if (!(buf = malloc((win_x + 1)*sizeof(char))))
 		oom();
 
 	for (i = vsnprintf(buf, win_x, fmt, val); i < win_x; i++)
 		buf[i] = ' ';
+	buf[win_x] = '\0';
 	
 	wattron(win, attr);
 	mvwprintw(win, y, 0, buf);

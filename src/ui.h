@@ -19,6 +19,8 @@ void ui_close();
 
 int ui_getchar();
 
+void ui_print(WINDOW *win, int y, int x, int l, int attr, const char *fmt, ...);
+
 void ui_printline(WINDOW *win, int y, int attr, const char *fmt, ...);
 
 #endif

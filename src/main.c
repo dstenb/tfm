@@ -5,9 +5,8 @@
 #include <locale.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <pwd.h>
-#include <grp.h>
 
+#include "draw.h"
 #include "dwindow.h"
 #include "list.h"
 #include "message.h"
@@ -17,13 +16,9 @@
 #include "utils.h"
 
 static void atexit_handler();
-static void draw();
-static int get_attr(const finfo *fp);
 static char *get_conf_dir();
 static void handle_resize();
 static void main_loop();
-static void print_file(const finfo *fp, int y, int selected);
-static void print_filebar(const finfo *fp, int y);
 static void *update_loop(void *v);
 static void usage();
 
@@ -37,55 +32,6 @@ atexit_handler()
 	states_clear();
 	dwindow_free(data.win[0]);
 	dwindow_free(data.win[1]);
-}
-
-void
-draw()
-{
-	int i;
-	int y, x;
-	int stop;
-	finfo *tmp;
-
-	getmaxyx(stdscr, y, x);
-
-	erase();
-	ui_printline(stdscr, 0, 
-			A_BOLD | COLOR_PAIR(C_TOPBAR), 
-			"%s (%i / %i)", data.wsel ? data.wsel->path : "", 
-			data.wsel->sel.i + 1, data.wsel->size);
-
-	if (data.wsel && data.wsel->sel.p) {
-
-		tmp = data.wsel->start.p;
-		i = 1;
-		stop = y - 2;
-
-		for (i = 1; i < (y - 2); i++) {
-			if (tmp) {
-				print_file(tmp, i, tmp == data.wsel->sel.p);
-				tmp = tmp->next;
-			} else {
-				ui_printline(stdscr, i, COLOR_PAIR(C_FILE), "");
-			}
-		}
-
-		print_filebar(data.wsel->sel.p, y - 2);
-	}
-
-	print_message(y - 1);
-	refresh();
-}
-
-int
-get_attr(const finfo *fp)
-{
-	if (F_ISDIR(fp))
-		return COLOR_PAIR(C_DIRECTORY);
-	if (F_ISLNK(fp))
-		return COLOR_PAIR(C_SYMLINK);
-	else
-		return COLOR_PAIR(C_FILE);
 }
 
 char *
@@ -111,9 +57,7 @@ void handle_resize()
 
 	getmaxyx(stdscr, y, x);
 
-	for (i = 0; i < 2; i++) {
-		dwindow_set_winsize(data.win[i], y - 3);
-	}
+	wdata_handle_resize(&data, y, x);
 }
 
 void
@@ -121,10 +65,11 @@ main_loop()
 {
 	int i;
 
-	handle_resize();
+	/*wdata_set_view(&data, V_HORIZONTAL);*/
+	wdata_set_view(&data, V_SINGLE);
 
 	for (;;) {
-		draw();
+		draw(&data);
 		i = ui_getchar();
 
 		if (i == KEY_RESIZE) {
@@ -133,38 +78,6 @@ main_loop()
 		
 		states_handlekey(&data, i);
 	}
-}
-
-void
-print_file(const finfo *fp, int y, int selected)
-{
-	int attr = selected ? (int) (COLOR_PAIR(C_SELECTED) | A_BOLD) : get_attr(fp);
-
-	if (F_ISDIR(fp))
-		ui_printline(stdscr, y, attr, " %s/", fp->name); 
-	else
-		ui_printline(stdscr, y, attr, " %s", fp->name);
-}
-
-void
-print_filebar(const finfo *fp, int y)
-{
-	char *sstr = strsize(fp->size);
-	struct passwd *u = getpwuid(fp->uid);
-	struct group *g = getgrgid(fp->gid);
-
-	ui_printline(stdscr, y, 
-			COLOR_PAIR(C_FILEBAR) | A_BOLD, 
-			" %c%s%s%s %20s %s %20s %20s",
-			F_ISDIR(fp) ? 'd' : '-',
-			strperm(fp->perms.u),
-			strperm(fp->perms.g),
-			strperm(fp->perms.o),
-			fp->name, sstr, 
-			u ? u->pw_name : "", 
-			g ? g->gr_name : "");
-
-	free(sstr);
 }
 
 void *

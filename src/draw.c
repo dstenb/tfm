@@ -4,7 +4,6 @@ static void draw_dwin(WINDOW *win, dwindow *dwin, int selected);
 static int get_attr(const finfo *fp, int selected);
 static void print_file(WINDOW *win, const finfo *fp, int y, int selected);
 static void print_filebar(const finfo *fp, int y);
-static void print_top(wdata_t *data);
 
 void
 print_file(WINDOW *win, const finfo *fp, int y, int selected)
@@ -93,7 +92,6 @@ draw(wdata_t *data)
 {
 	WINDOW *win[2] = { NULL, NULL };
 	int y, x;
-	int i;
 
 	getmaxyx(stdscr, y, x);
 
@@ -110,7 +108,6 @@ draw(wdata_t *data)
 		draw_dwin(win[0], data->win[0], data->win[0] == data->wsel);
 		draw_dwin(win[1], data->win[1], data->win[1] == data->wsel); */
 	} else {
-		win[0] = newwin(y - 2, x, 0, 0);
 		draw_dwin(stdscr, data->wsel, 1);
 	}
 
@@ -119,7 +116,8 @@ draw(wdata_t *data)
 	
 	refresh();
 
-	if (data->view == V_VERTICAL /* ||  data->view == V_HORIZONTAL */)
+	if (data->view == V_VERTICAL /* ||  data->view == V_HORIZONTAL */) {
 		delwin(win[0]);
 		delwin(win[1]);
+	}
 }

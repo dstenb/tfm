@@ -61,10 +61,13 @@ draw()
 		i = 1;
 		stop = y - 2;
 
-		while (tmp && i < stop) {
-			print_file(tmp, i, tmp == data.wsel->sel.p);
-			i++;
-			tmp = tmp->next;
+		for (i = 1; i < (y - 2); i++) {
+			if (tmp) {
+				print_file(tmp, i, tmp == data.wsel->sel.p);
+				tmp = tmp->next;
+			} else {
+				ui_printline(stdscr, i, COLOR_PAIR(C_FILE), "");
+			}
 		}
 
 		print_filebar(data.wsel->sel.p, y - 2);

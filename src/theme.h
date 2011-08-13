@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <errno.h>
 
 #include "utils.h"
@@ -22,10 +23,10 @@ typedef enum {
 	C_DIRECTORY,
 	C_SYMLINK,
 	C_SELECTED
-} theme_color_t;
+} color_t;
 
-/* initialize the default theme */
-void theme_init_default();
+/* initialize the theme */
+void theme_init();
 
 /* read and set theme data from file, 
  * returns 0 if successful, else errno */

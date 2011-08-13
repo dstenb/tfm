@@ -4,6 +4,20 @@ static int parse_color(const char *str, int *color);
 static int parse_line(char *line, int *id, int *fg, int *bg);
 
 struct {
+	int id, fg, bg;
+} c_data[] = {
+	{ C_TOPBAR,    COLOR_WHITE,  COLOR_DEFAULT },
+	{ C_FILEBAR,   COLOR_BLACK,  COLOR_WHITE},
+	{ C_INFO,      COLOR_WHITE,  COLOR_DEFAULT},
+	{ C_WARNING,   COLOR_YELLOW, COLOR_DEFAULT},
+	{ C_ERROR,     COLOR_RED,    COLOR_DEFAULT},
+	{ C_FILE,      COLOR_WHITE,  COLOR_DEFAULT},
+	{ C_DIRECTORY, COLOR_BLUE,   COLOR_DEFAULT},
+	{ C_SYMLINK,   COLOR_GREEN,  COLOR_DEFAULT},
+	{ C_SELECTED,  COLOR_WHITE,  COLOR_BLUE}
+};
+
+struct {
 	char *name;
 	int v;
 } c_identifiers[] = {
@@ -78,17 +92,13 @@ parse_line(char *line, int *id, int *fg, int *bg)
 }
 
 void
-theme_init_default()
+theme_init()
 {
-	init_pair(C_TOPBAR,    COLOR_WHITE,  COLOR_DEFAULT);
-	init_pair(C_FILEBAR,   COLOR_BLACK,  COLOR_WHITE);
-	init_pair(C_INFO,      COLOR_WHITE,  COLOR_DEFAULT);
-	init_pair(C_WARNING,   COLOR_YELLOW, COLOR_DEFAULT);
-	init_pair(C_ERROR,     COLOR_RED,    COLOR_DEFAULT);
-	init_pair(C_FILE,      COLOR_WHITE,  COLOR_DEFAULT);
-	init_pair(C_DIRECTORY, COLOR_BLUE,   COLOR_DEFAULT);
-	init_pair(C_SYMLINK,   COLOR_GREEN,  COLOR_DEFAULT);
-	init_pair(C_SELECTED,  COLOR_WHITE,  COLOR_BLUE);
+	int i;
+
+	for (i = 0; i < ARRSIZE(c_data); i++) {
+		init_pair(c_data[i].id, c_data[i].fg, c_data[i].bg);
+	}
 }
 
 int
@@ -105,7 +115,10 @@ theme_read_from_file(const char *path)
 
 	while(fgets(buf, sizeof(buf), fp)) {
 		if (parse_line(buf, &id, &fg, &bg)) {
-			init_pair(id, fg, bg);
+			if ((id - 1) >= 0 && (id - 1) < ARRSIZE(c_data)) {
+				c_data[id - 1].fg = fg;
+				c_data[id - 1].bg = bg;
+			}
 		}
 	}
 

@@ -1,6 +1,8 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
+#include <stdlib.h>
+#include <time.h>
 #include <pwd.h>
 #include <grp.h>
 

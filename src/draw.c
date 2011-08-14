@@ -2,26 +2,43 @@
 
 static void draw_dwin(WINDOW *win, dwindow *dwin, int selected);
 static int get_attr(const finfo *fp, int selected);
-static void print_file(WINDOW *win, const finfo *fp, int y, int selected);
-static void print_filebar(const finfo *fp, int y);
+static void print_file(WINDOW *win, const finfo *fp, int y, int w, int selected);
+static void print_filebar(const finfo *fp);
 
 void
-print_file(WINDOW *win, const finfo *fp, int y, int selected)
+print_file(WINDOW *win, const finfo *fp, int y, int w, int selected)
 {
+	char buf[w / 2];
+	char *sstr;
+	char timestr[64];
+	struct tm *time;
 	int attr = get_attr(fp, selected);
 
 	if (F_ISDIR(fp))
-		ui_printline(win, y, attr, " %s/", fp->name); 
+		snprintf(buf, w / 2, " %s/", fp->name);
 	else
-		ui_printline(win, y, attr, " %s", fp->name);
+		snprintf(buf, w / 2, " %s", fp->name);
+
+	time = localtime(&fp->mtime);
+	strftime(timestr, sizeof(timestr), "%y/%m/%d", time);
+	sstr = strsize(fp->size);
+
+	ui_printline(win, y, attr, "%*s %*s %*s", - (w / 2) + 1, buf, 
+			(w / 4) - 1, sstr, (w / 4) - 1, timestr);
+
+	free(sstr);
 }
 
 void
-print_filebar(const finfo *fp, int y)
+print_filebar(const finfo *fp)
 {
+	int y, x;
 	char *sstr;
 	struct passwd *u;
 	struct group *g;
+
+	getmaxyx(stdscr, y, x);
+	y -= 2;
 
 	if (fp) {
 		sstr = strsize(fp->size);
@@ -30,7 +47,8 @@ print_filebar(const finfo *fp, int y)
 
 		ui_printline(stdscr, y, 
 			COLOR_PAIR(C_FILEBAR) | A_BOLD, 
-			" %s %c%s%s%s %s %20s %20s",
+			" %*s %c%s%s%s %s %20s:%-20s",
+			1 - (x / 2),
 			fp->name,
 			F_ISDIR(fp) ? 'd' : '-',
 			strperm(fp->perms.u),
@@ -76,7 +94,7 @@ draw_dwin(WINDOW *win, dwindow *dwin, int selected)
 
 	for (i = 1; i < y; i++) {
 		if (fp) {
-			print_file(win, fp, i, fp == dwin->sel.p);
+			print_file(win, fp, i, x, fp == dwin->sel.p);
 			fp = fp->next;
 		} else {
 			ui_printline(win, i, COLOR_PAIR(C_FILE), "");
@@ -111,7 +129,7 @@ draw(wdata_t *data)
 		draw_dwin(stdscr, data->wsel, 1);
 	}
 
-	print_filebar(data->wsel->sel.p, y - 2);
+	print_filebar(data->wsel->sel.p);
 	print_message(y - 1);
 	
 	refresh();

@@ -159,7 +159,11 @@ dwindow_reload(dwindow *dwin)
 	}
 
 	dwindow_read(dwin, dwin->path);
-	dwindow_set_selected_by_name(dwin, name);
+
+	if (name) {
+		dwindow_set_selected_by_name(dwin, name);
+		free(name);
+	}
 }
 
 void

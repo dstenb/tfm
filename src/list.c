@@ -7,6 +7,7 @@ static void cmd_chwin(wdata_t *data);
 static void cmd_go_down(wdata_t *data);
 static void cmd_go_up(wdata_t *data);
 static void cmd_previous_dir(wdata_t *data);
+static void cmd_toggle_dotfiles(wdata_t *data);
 static void cmd_toggle_sort(wdata_t *data);
 
 void
@@ -71,6 +72,12 @@ cmd_previous_dir(wdata_t *data)
 }
 
 void
+cmd_toggle_dotfiles(wdata_t *data)
+{
+	dwindow_show_dotfiles(data->wsel, !data->wsel->show_dot);
+}
+
+void
 cmd_toggle_sort(wdata_t *data)
 {
 	dwindow *dwin = data->wsel;
@@ -106,6 +113,8 @@ list_handle_key(wdata_t *data, int c)
 		cmd_previous_dir(data);
  	} else if (c == 's') {
 		cmd_toggle_sort(data);
+	} else if (c == 'H') {
+		cmd_toggle_dotfiles(data);
 	} else if (has_selected_file(data->wsel)) {
 		if (c == 13) {
 			cmd_action(data);

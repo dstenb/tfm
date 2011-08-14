@@ -8,6 +8,8 @@ static int finfo_cmp(finfo *a, finfo *b, finfocmp *cmp);
 static finfo *merge(finfo *a, finfo *b, finfocmp *cmp);
 static finfo *mergesort(finfo *head, finfocmp *cmp);
 
+static int valid_name(const char *name, int show_dot);
+
 void
 dwindow_clear(dwindow *dwin)
 {
@@ -87,9 +89,11 @@ dwindow_read(dwindow *dwin, const char *path)
 
 	if (!(dir = opendir(rpath))) {
 		/* try to read previous dir */
-		prevdir(rpath);
-		if (!streq(rpath, "/"))
+
+		if (!streq(rpath, "/")) {
+			prevdir(rpath);
 			return dwindow_read(dwin, rpath);
+		}
 
 		return errno;
 	}
@@ -132,7 +136,7 @@ dwindow_read_files(dwindow *dwin, DIR *dir)
 	finfo *fp;
 
 	while ((de = readdir(dir))) {
-		if (!streq(de->d_name, ".") && !streq(de->d_name, "..")) {
+		if (valid_name(de->d_name, dwin->show_dot)) {
 			fp = finfo_create(dwin->path, de->d_name);
 
 			if (finfo_stat(fp) == 0) {
@@ -142,6 +146,20 @@ dwindow_read_files(dwindow *dwin, DIR *dir)
 			}
 		}
 	}
+}
+
+void
+dwindow_reload(dwindow *dwin)
+{
+	char *name = NULL;
+
+	if (has_selected_file(dwin)) {
+		if (!(name = strdup(dwin->sel.p->name)))
+			oom();
+	}
+
+	dwindow_read(dwin, dwin->path);
+	dwindow_set_selected_by_name(dwin, name);
 }
 
 void
@@ -199,6 +217,13 @@ dwindow_set_winsize(dwindow *dwin, int winsize)
 {
 	dwin->winsize = winsize;
 	dwindow_fix_bounds(dwin);
+}
+
+void
+dwindow_show_dotfiles(dwindow *dwin, int show)
+{
+	dwin->show_dot = show;	
+	dwindow_reload(dwin);
 }
 
 void
@@ -283,4 +308,14 @@ strsort(int sort)
 	default:
 		return NULL;
 	}
+}
+
+int
+valid_name(const char *name, int show_dot)
+{
+	if (show_dot)
+		return !streq(name, ".") && !streq(name, "..");
+	else
+		return *name != '.';
+
 }

@@ -34,6 +34,7 @@ typedef struct {
 	sort_t sort;
 	int winsize;
 	finfocmp *cmp;
+	int show_dot;
 } dwindow;
 
 /* create a dwindow struct */
@@ -48,6 +49,8 @@ void dwindow_free(dwindow *dwin);
 /* read a path. returns 0 if successful, or errno if not */
 int dwindow_read(dwindow *dwin, const char *path);
 
+void dwindow_reload(dwindow *dwin);
+
 /* set selected finfo struct by pos */
 void dwindow_set_selected(dwindow *dwin, pos_t pos);
 
@@ -59,6 +62,8 @@ void dwindow_set_sort(dwindow *dwin, int sort);
 
 /* set window size and fix bounds */
 void dwindow_set_winsize(dwindow *dwin, int winsize);
+
+void dwindow_show_dotfiles(dwindow *dwin, int show);
 
 /* sorts the files */
 void dwindow_sort(dwindow *dwin);

@@ -11,8 +11,6 @@
 #include <ncurses.h>
 #endif
 
-#include "utils.h"
-
 void ui_init();
 
 void ui_close();

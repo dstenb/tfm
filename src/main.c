@@ -52,7 +52,6 @@ get_conf_dir()
 
 void handle_resize()
 {
-	int i;
 	int y, x;
 
 	getmaxyx(stdscr, y, x);
@@ -66,7 +65,7 @@ main_loop()
 	int i;
 
 	/*wdata_set_view(&data, V_HORIZONTAL);*/
-	wdata_set_view(&data, V_SINGLE);
+	wdata_set_view(&data, V_VERTICAL);
 
 	for (;;) {
 		draw(&data);

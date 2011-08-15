@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "ui.h"
+
 #define ARRSIZE(x) (int)(sizeof(x) / sizeof(*x))
 
 #define streq(s1, s2) (strcmp(s1, s2) == 0)

@@ -5,6 +5,8 @@ die(const char *fmt, ...)
 {
 	va_list val;
 
+	ui_close();
+
 	va_start(val, fmt);
 	vfprintf(stderr, fmt, val);
 	va_end(val);

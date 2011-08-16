@@ -12,6 +12,7 @@ static void cmd_home(wdata_t *data);
 static void cmd_previous_dir(wdata_t *data);
 static void cmd_toggle_dotfiles(wdata_t *data);
 static void cmd_toggle_sort(wdata_t *data);
+static void cmd_toggle_view(wdata_t *data);
 
 struct {
 	int key;
@@ -25,8 +26,9 @@ struct {
 	{ 'g', cmd_home },
 	{ 'G', cmd_end },
 	{ 't', cmd_chwin },
-	{ 's', cmd_toggle_sort },
 	{ 'H', cmd_toggle_dotfiles },
+	{ 's', cmd_toggle_sort },
+	{ 'V', cmd_toggle_view },
 	{ 'u', cmd_previous_dir },
 	{ ':', cmd_chcmd }
 };
@@ -34,7 +36,6 @@ struct {
 void
 activate()
 {
-	set_message(M_INFO, "");
 }
 
 state *
@@ -152,4 +153,8 @@ cmd_toggle_sort(wdata_t *data)
 	dwindow_set_selected(dwin, 0);
 }
 
-
+void
+cmd_toggle_view(wdata_t *data)
+{
+	wdata_set_view(data, (data->view + 1) % N_VIEWS);
+}

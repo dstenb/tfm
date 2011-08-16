@@ -19,6 +19,7 @@ static void atexit_handler();
 static char *get_conf_dir();
 static void handle_resize();
 static void main_loop();
+static void update(dwindow *dwin);
 static void *update_loop(void *v);
 static void usage();
 
@@ -64,18 +65,40 @@ main_loop()
 {
 	int i;
 
-	/*wdata_set_view(&data, V_HORIZONTAL);*/
+	wdata_lock_mutex(&data);
 	wdata_set_view(&data, V_VERTICAL);
+	wdata_unlock_mutex(&data);
 
 	for (;;) {
+		wdata_lock_mutex(&data);
 		draw(&data);
+		wdata_unlock_mutex(&data);
+
 		i = ui_getchar();
 
 		if (i == KEY_RESIZE) {
 			handle_resize();
 		}
 		
+		wdata_lock_mutex(&data);
 		states_handlekey(&data, i);
+		wdata_unlock_mutex(&data);
+	}
+}
+
+void
+update(dwindow *dwin)
+{
+	time_t otime;
+	int err;
+
+	if (dwin->dirinfo) {
+		otime = dwin->dirinfo->mtime;
+		err = finfo_stat(dwin->dirinfo);
+
+		if (err || dwin->dirinfo->mtime > otime) {
+			dwindow_reload(dwin);
+		}
 	}
 }
 
@@ -85,9 +108,14 @@ update_loop(void *v)
 	wdata_t *data = v;
 
 	for (;;) {
-		sleep(10);
-	/*	draw("Update loop");
-	*/}
+		sleep(1);
+		
+		wdata_lock_mutex(data);
+		update(data->win[0]);
+		update(data->win[1]);
+		draw(data);
+		wdata_unlock_mutex(data);
+	}
 	
 	return NULL;
 }
@@ -130,8 +158,7 @@ main(int argc, char **argv)
 
 	data.wsel = data.win[0];
 
-	if (pthread_create(&u_tid, NULL, update_loop, NULL) != 0)
-		die("pthread_create: %s\n", strerror(errno));
+	pthread_mutex_init(&data.mutex, NULL);
 
 	if ((confdir = get_conf_dir())) {
 		chdir(confdir);
@@ -144,6 +171,10 @@ main(int argc, char **argv)
 	theme_init();
 
 	states_push(list_state());
+
+	if (pthread_create(&u_tid, NULL, update_loop, &data) != 0)
+		die("pthread_create: %s\n", strerror(errno));
+
 	main_loop();
 	ui_close();
 

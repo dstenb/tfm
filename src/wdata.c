@@ -28,3 +28,17 @@ wdata_set_view(wdata_t *data, view_t view)
 		wdata_handle_resize(data, y, 0);
 	}
 }
+
+void 
+wdata_lock_mutex(wdata_t *data)
+{
+	pthread_mutex_lock(&data->mutex);
+}
+
+void 
+wdata_unlock_mutex(wdata_t *data)
+{
+	pthread_mutex_unlock(&data->mutex);
+}
+
+

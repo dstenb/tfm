@@ -6,7 +6,7 @@ typedef struct cmd cmd;
 typedef struct ac_node ac_node;
 
 struct cmd {
-	char *name;	
+	char *name;
 };
 
 struct ac_node {
@@ -15,17 +15,16 @@ struct ac_node {
 };
 
 static void activate();
-static void execute();
+static void execute(wdata_t *data);
 static void reset();
-
-static int cmd_add_key(int c);
-static int cmd_del_key(int c);
 
 static void autocomplete_clear();
 static void autocomplete_free(ac_node *anode);
 static ac_node *autocomplete_get(const char *str);
 static void autocomplete_handle();
 static int autocomplete_length(ac_node *anode);
+static void autocomplete_next();
+static void autocomplete_retrieve();
 static char *get_first_word(const char *txt);
 static void replace_first_word(char *txt, size_t size, const char *nw);
 
@@ -53,16 +52,16 @@ activate()
 }
 
 void
-execute()
+execute(wdata_t *data)
 {
 
 }
-
 
 void
 reset()
 {
 	autocomplete_clear();
+
 	cmd_data.buf[(cmd_data.bufpos = 0)] = '\0';
 }
 
@@ -113,35 +112,12 @@ autocomplete_get(const char *str)
 void
 autocomplete_handle()
 {
-	char *cmdname = NULL;
-
 	if (ac_data.node) {
 		/* change to next command */
-
-		if (!(ac_data.curr = ac_data.curr->next))
-			ac_data.curr = ac_data.node;
-
-		replace_first_word(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
-		cmd_data.bufpos = strlen(cmd_data.buf);
-		set_message(M_INFO, ":%s", cmd_data.buf);
+		autocomplete_next();
 	} else {
 		/* retrieve autocomplete list */
-
-		if (!(cmdname = get_first_word(cmd_data.buf))) {
-			cmdname = strdup("");
-		}
-
-		ac_data.node = autocomplete_get(cmdname);
-		ac_data.curr = ac_data.node;
-		free(cmdname);
-
-		if (ac_data.curr) {
-			replace_first_word(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
-			cmd_data.bufpos = strlen(cmd_data.buf);
-			set_message(M_INFO, ":%s", cmd_data.buf);
-		} else {
-			set_message(M_ERROR, "no such command");
-		}
+		autocomplete_retrieve();
 	}
 }
 
@@ -154,18 +130,38 @@ autocomplete_length(ac_node *anode)
 	return i;
 }
 
-int
-cmd_add_key(int c)
+void
+autocomplete_next()
 {
+	if (!(ac_data.curr = ac_data.curr->next))
+		ac_data.curr = ac_data.node;
 
-
+	replace_first_word(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
+	cmd_data.bufpos = strlen(cmd_data.buf);
+	set_message(M_INFO, ":%s", cmd_data.buf);
 }
 
-int cmd_del_key(int c)
+void
+autocomplete_retrieve()
 {
+	char *cmdname;
 
+	if (!(cmdname = get_first_word(cmd_data.buf))) {
+		cmdname = strdup("");
+	}
+
+	ac_data.node = autocomplete_get(cmdname);
+	ac_data.curr = ac_data.node;
+	free(cmdname);
+
+	if (ac_data.curr) {
+		replace_first_word(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
+		cmd_data.bufpos = strlen(cmd_data.buf);
+		set_message(M_INFO, ":%s", cmd_data.buf);
+	} else {
+		set_message(M_ERROR, "'%s': no such command", cmd_data.buf);
+	}
 }
-
 
 /* get first word from text */
 char *
@@ -184,11 +180,10 @@ void
 replace_first_word(char *txt, size_t size, const char *nw)
 {
 	char buf[size];
-	char *p;
 	char *q;
 
 	strcpy(buf, txt);
-	p = strtok_r(buf, " \t", &q);
+	strtok_r(buf, " \t", &q);
 
 	snprintf(txt, size, "%s%s", nw, q);
 }
@@ -213,12 +208,13 @@ void
 cmd_handle_key(wdata_t *data, int c)
 {
 	if (c == 27) {
+		reset();
 		states_pop();
 	} else if (c == 9) {
 		autocomplete_handle();
 	} else if (c == 13) {
-		execute();
-		states_pop();
+		execute(data);
+		reset();
 	} else if (c == 263) {
 		if (cmd_data.bufpos > 0) {
 			autocomplete_clear();

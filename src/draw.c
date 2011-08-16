@@ -119,12 +119,14 @@ draw(wdata_t *data)
 		
 		draw_dwin(win[0], data->win[0], data->win[0] == data->wsel);
 		draw_dwin(win[1], data->win[1], data->win[1] == data->wsel);
-/*	} else if (data->view == V_HORIZONTAL) {
+	} else if (data->view == V_HORIZONTAL) {
 		win[0] = newwin((y - 2) / 2, x, 0, 0);
 		win[1] = newwin((y - 2) / 2, x, (y - 2) / 2, 0);
 
+		if (y % 2)
+			ui_printline(stdscr, (y - 3), COLOR_PAIR(C_FILE), "");
 		draw_dwin(win[0], data->win[0], data->win[0] == data->wsel);
-		draw_dwin(win[1], data->win[1], data->win[1] == data->wsel); */
+		draw_dwin(win[1], data->win[1], data->win[1] == data->wsel);
 	} else {
 		draw_dwin(stdscr, data->wsel, 1);
 	}

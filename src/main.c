@@ -66,7 +66,8 @@ main_loop()
 	int i;
 
 	wdata_lock_mutex(&data);
-	wdata_set_view(&data, V_VERTICAL);
+/*	wdata_set_view(&data, V_VERTICAL);*/
+	wdata_set_view(&data, V_HORIZONTAL);
 	wdata_unlock_mutex(&data);
 
 	for (;;) {

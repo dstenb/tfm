@@ -7,8 +7,7 @@
 typedef enum {
 	V_SINGLE,
 	V_VERTICAL,
-/*	V_HORIZONTAL,
-*/
+	V_HORIZONTAL,
 	N_VIEWS
 } view_t;
 

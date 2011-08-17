@@ -136,7 +136,7 @@ draw(wdata_t *data)
 	
 	refresh();
 
-	if (data->view == V_VERTICAL /* ||  data->view == V_HORIZONTAL */) {
+	if (data->view == V_VERTICAL || data->view == V_HORIZONTAL) {
 		delwin(win[0]);
 		delwin(win[1]);
 	}

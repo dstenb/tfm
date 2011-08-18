@@ -9,9 +9,12 @@
 #include "utils.h"
 #include "ui.h"
 
+/* declare COLOR_DEFAULT if not set */
 #ifndef COLOR_DEFAULT
 #define COLOR_DEFAULT -1
 #endif
+
+/* handles theme data */
 
 typedef enum {
 	C_TOPBAR = 1,
@@ -23,13 +26,14 @@ typedef enum {
 	C_DIRECTORY,
 	C_SYMLINK,
 	C_SELECTED,
-	N_COLORS
 } color_t;
+
+#define N_COLORS 9
 
 /* initialize the theme */
 void theme_init();
 
-/* read and set theme data from file, 
+/* read and set theme data from a file, 
  * returns 0 if successful, else errno */
 int theme_read_from_file(const char *path);
 

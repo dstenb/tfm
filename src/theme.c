@@ -1,8 +1,12 @@
 #include "theme.h"
 
+/* parse color, returns 1 if ok, else 0 */
 static int parse_color(const char *str, int *color);
+
+/* parses a theme line, returns 1 if ok, else 0 */
 static int parse_line(char *line, int *id, int *fg, int *bg);
 
+/* array for all theme data */
 struct {
 	int id, fg, bg;
 } c_data[] = {
@@ -17,6 +21,7 @@ struct {
 	{ C_SELECTED,  COLOR_WHITE,  COLOR_BLUE}
 };
 
+/* color_t lookup table */
 struct {
 	char *name;
 	int v;
@@ -32,6 +37,7 @@ struct {
 	{ "selected", C_SELECTED }
 };
 
+/* color lookup table */
 struct {
 	char *name;
 	int v;

@@ -153,6 +153,9 @@ dwindow_reload(dwindow *dwin)
 {
 	char *name = NULL;
 
+	if (!(dwin->path))
+		return;
+
 	if (has_selected_file(dwin)) {
 		if (!(name = strdup(dwin->sel.p->name)))
 			oom();

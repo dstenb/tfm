@@ -22,7 +22,8 @@ typedef enum {
 	C_FILE,
 	C_DIRECTORY,
 	C_SYMLINK,
-	C_SELECTED
+	C_SELECTED,
+	N_COLORS
 } color_t;
 
 /* initialize the theme */

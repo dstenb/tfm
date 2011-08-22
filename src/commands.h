@@ -29,6 +29,9 @@ int cmd_go_home(wdata_t *data, const arg_t *arg);
 /* go up one entry in the selected dwindow */
 int cmd_go_up(wdata_t *data, const arg_t *arg);
 
+/* quit program */
+int cmd_quit(wdata_t *data, const arg_t *arg);
+
 /* set whether or not dotfiles should be shown for selected dwindow */
 int cmd_set_dotfiles(wdata_t *data, const arg_t *arg);
 

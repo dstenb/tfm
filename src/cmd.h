@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
+#include "commands.h"
 #include "message.h"
 #include "state.h"
 

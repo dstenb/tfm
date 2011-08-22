@@ -14,6 +14,7 @@ int
 cmd_go_down(wdata_t *data, const arg_t *arg)
 {
 	dwindow_set_selected(data->wsel, data->wsel->sel.i + 1);
+	set_message(M_INFO, "");
 	return 1;
 }
 
@@ -21,6 +22,7 @@ int
 cmd_go_end(wdata_t *data, const arg_t *arg)
 {
 	dwindow_set_selected(data->wsel, data->wsel->size);
+	set_message(M_INFO, "");
 	return 1;
 }
 
@@ -28,6 +30,7 @@ int
 cmd_go_home(wdata_t *data, const arg_t *arg)
 {
 	dwindow_set_selected(data->wsel, 0);
+	set_message(M_INFO, "");
 	return 1;
 }
 
@@ -37,8 +40,15 @@ cmd_go_up(wdata_t *data, const arg_t *arg)
 	if (data->wsel->sel.i > 0) {
 		dwindow_set_selected(data->wsel, data->wsel->sel.i - 1);
 	}
+	set_message(M_INFO, "");
 
 	return 1;
+}
+
+int
+cmd_quit(wdata_t *data, const arg_t *arg)
+{
+	exit(EXIT_SUCCESS);
 }
 
 int
@@ -67,6 +77,7 @@ int
 cmd_set_selected(wdata_t *data, const arg_t *arg)
 {
 	dwindow_set_selected(data->wsel, arg->i);
+	set_message(M_INFO, "");
 	return 1;
 }
 
@@ -75,6 +86,7 @@ cmd_set_selected_r(wdata_t *data, const arg_t *arg)
 {
 	dwindow_set_selected(data->wsel,
 			data->wsel->sel.i + arg->i);
+	set_message(M_INFO, "");
 	return 1;
 }
 
@@ -83,6 +95,7 @@ cmd_set_sort(wdata_t *data, const arg_t *arg)
 {
 	if (arg->i < 0 || arg->i >= N_SORTMETHODS)
 		return 0;
+	set_message(M_INFO, "");
 
 	dwindow_set_sort(data->wsel, arg->i);
 

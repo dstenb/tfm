@@ -7,6 +7,7 @@ typedef struct ac_node ac_node;
 
 struct cmd {
 	char *name;
+	int (*func)(wdata_t *data, const arg_t *arg);
 };
 
 struct ac_node {
@@ -26,12 +27,13 @@ static int autocomplete_length(ac_node *anode);
 static void autocomplete_next();
 static void autocomplete_retrieve();
 static char *get_first_word(const char *txt);
+static int no_of_words(const char *txt);
 static void replace_first_word(char *txt, size_t size, const char *nw);
 
-cmd cmds[] = {
-	{ "cp" },
-	{ "q" },
-	{ "quit" }
+static cmd cmds[] = {
+	{ "cd", cmd_set_path },
+	{ "q", cmd_quit },
+	{ "quit", cmd_quit }
 };
 
 struct {
@@ -54,7 +56,30 @@ activate()
 void
 execute(wdata_t *data)
 {
+	char tmp[CMD_BUFSIZE + 1];
+	char *name;
+	int i;
+	arg_t arg;
 
+	strcpy(tmp, cmd_data.buf);
+
+	name = strtok(tmp, " ");
+	arg.s = strtok(NULL, " ");
+
+	if (!name) {
+		/* no command entered, leave cmd state */
+		set_message(M_INFO, "");
+	} else {
+		for (i = 0; i < ARRSIZE(cmds); i++) {
+			if (streq(name, cmds[i].name)) {
+				cmds[i].func(data, &arg);
+				return;
+			}
+		}
+
+		/* no command found, print error message */
+		set_message(M_ERROR, "no such command: '%s' ", name);
+	}
 }
 
 void
@@ -112,12 +137,14 @@ autocomplete_get(const char *str)
 void
 autocomplete_handle()
 {
-	if (ac_data.node) {
-		/* change to next command */
-		autocomplete_next();
+	if (no_of_words(cmd_data.buf) <= 1) {
+		if (ac_data.node) { /* change to next command */
+			autocomplete_next();
+		} else { /* retrieve autocomplete list */
+			autocomplete_retrieve();
+		}
 	} else {
-		/* retrieve autocomplete list */
-		autocomplete_retrieve();
+		/* handle argument completition */
 	}
 }
 
@@ -126,7 +153,10 @@ autocomplete_length(ac_node *anode)
 {
 	int i;
 
-	for (i = 0; anode; i++, anode = anode->next) { }
+	for (i = 0; anode; i++, anode = anode->next) {
+		NULL;
+	}
+
 	return i;
 }
 
@@ -169,11 +199,30 @@ get_first_word(const char *txt)
 {
 	char buf[strlen(txt) + 1];
 	char *p;
+	char *q;
 
 	strcpy(buf, txt);
-	p = strtok(buf, " \t");
+	p = strtok_r(buf, " \t", &q);
 
 	return p ? strdup(p) : NULL;
+}
+
+int
+no_of_words(const char *txt)
+{
+	int i = 0;
+	int at_word = 0;
+
+	for ( ; *txt; txt++) {
+		if (*txt == ' ') {
+			at_word = 0;
+		} else if (!at_word) {
+			at_word = 1;
+			i++;
+		}
+	}
+
+	return i;
 }
 
 void
@@ -192,10 +241,7 @@ state *
 cmd_state()
 {
 	state *s;
-	
-	*cmd_data.buf = '\0';
-	cmd_data.bufpos = 0;
-	
+
 	if (!(s = malloc(sizeof(state))))
 		die("out of memory\n");
 	s->keycmd = cmd_handle_key;
@@ -215,12 +261,14 @@ cmd_handle_key(wdata_t *data, int c)
 	} else if (c == 13) {
 		execute(data);
 		reset();
+		states_pop();
 	} else if (c == 263) {
 		if (cmd_data.bufpos > 0) {
 			autocomplete_clear();
 			cmd_data.buf[--cmd_data.bufpos] = '\0';
 			set_message(M_INFO, ":%s", cmd_data.buf);
 		} else {
+			set_message(M_INFO, "");
 			states_pop();
 		}
 	} else if (c >= 32) {

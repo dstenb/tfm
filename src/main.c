@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include "config.h"
 #include "draw.h"
 #include "dwindow.h"
 #include "list.h"
@@ -19,22 +20,27 @@ static void atexit_handler();
 static char *get_conf_dir();
 static void handle_resize();
 static void main_loop();
+static void read_config_files();
 static void update(dwindow *dwin);
 static void *update_loop(void *v);
 static void usage();
 
+static config_t *config;
 static char *cmdname = NULL;
 static wdata_t data;
 
 void
 atexit_handler()
 {
+	config_free(config);
 	ui_close();
 	states_clear();
 	dwindow_free(data.win[0]);
 	dwindow_free(data.win[1]);
 }
 
+/* create a string containing the absolute path to the configuration directory,
+ * returns NULL if not successful */
 char *
 get_conf_dir()
 {
@@ -51,13 +57,17 @@ get_conf_dir()
 	return path;
 }
 
-void handle_resize()
+/* get terminal size and fix window sizes */
+void
+handle_resize()
 {
 	int y, x;
 
 	getmaxyx(stdscr, y, x);
 
+	wdata_lock_mutex(&data);
 	wdata_handle_resize(&data, y, x);
+	wdata_unlock_mutex(&data);
 }
 
 void
@@ -66,8 +76,7 @@ main_loop()
 	int i;
 
 	wdata_lock_mutex(&data);
-/*	wdata_set_view(&data, V_VERTICAL);*/
-	wdata_set_view(&data, V_HORIZONTAL);
+	wdata_set_view(&data, config->view);
 	wdata_unlock_mutex(&data);
 
 	for (;;) {
@@ -87,6 +96,37 @@ main_loop()
 	}
 }
 
+/* tries to read all configuration files */
+void
+read_config_files()
+{
+	char *confdir;
+	char path[PATH_MAX + 1];
+
+	if ((confdir = get_conf_dir())) {
+
+		/* (try to) read main configuration file */
+		snprintf(path, sizeof(path), "%s/config", confdir);
+		config_read(config, path);
+
+		/* (try to) read theme file */
+		if (config->theme) {
+			if (*config->theme == '/') {
+				snprintf(path, sizeof(path), "%s",
+						config->theme);
+			} else {
+				snprintf(path, sizeof(path), "%s/%s",
+						path, config->theme);
+			}
+			
+			theme_read_from_file(path);
+		}
+
+		free(confdir);
+	}
+}
+
+/* reloads the dwindow if its been modified since last read */
 void
 update(dwindow *dwin)
 {
@@ -131,7 +171,6 @@ int
 main(int argc, char **argv)
 {
 	char *paths[] = { NULL, NULL };
-	char *confdir;
 	int i;
 	pthread_t u_tid;
 
@@ -150,29 +189,27 @@ main(int argc, char **argv)
 	if (!setlocale(LC_CTYPE, ""))
 		die("couldn't set locale\n");
 
+	config = config_default();
+	read_config_files();
+
 	/* setup windows */
 	for (i = 0; i < 2; i++) {
 		data.win[i] = dwindow_create();
-		dwindow_set_sort(data.win[i], BY_NAME);
+		dwindow_set_sort(data.win[i], config->sort);
 		dwindow_read(data.win[i], paths[i]);
 	}
 
 	data.wsel = data.win[0];
 
-	pthread_mutex_init(&data.mutex, NULL);
-
-	if ((confdir = get_conf_dir())) {
-		chdir(confdir);
-		theme_read_from_file("theme");
-		free(confdir);
-	}
-
 	/* setup ui */
 	ui_init();
 	theme_init();
 
+	/* set default state */
 	states_push(list_state());
 
+	/* start update thread */
+	pthread_mutex_init(&data.mutex, NULL);
 	if (pthread_create(&u_tid, NULL, update_loop, &data) != 0)
 		die("pthread_create: %s\n", strerror(errno));
 

@@ -24,14 +24,13 @@ static void update(dwindow *dwin);
 static void *update_loop(void *v);
 static void usage();
 
-static config_t *config;
 static char *cmdname = NULL;
 static wdata_t data;
 
 void
 atexit_handler()
 {
-	config_free(config);
+	config_close();
 	ui_close();
 	states_clear();
 	dwindow_free(data.win[0]);
@@ -57,7 +56,7 @@ main_loop()
 	int i;
 
 	wdata_lock_mutex(&data);
-	wdata_set_view(&data, config->view);
+	wdata_set_view(&data, config()->view);
 	wdata_unlock_mutex(&data);
 
 	for (;;) {
@@ -88,18 +87,19 @@ read_config_files()
 
 		/* (try to) read main configuration file */
 		snprintf(path, sizeof(path), "%s/config", confdir);
-		config_read(config, path);
+		config_read(path);
 
 		/* (try to) read theme file */
-		if (config->theme) {
-			if (*config->theme == '/') {
+		if (config()->theme) {
+			if (*config()->theme == '/') {
 				snprintf(path, sizeof(path), "%s",
-						config->theme);
+						config()->theme);
 			} else {
 				snprintf(path, sizeof(path), "%s/%s",
-						path, config->theme);
+						confdir, config()->theme);
 			}
-			
+		
+			printf("theme_read: %s\n", path);
 			theme_read_from_file(path);
 		}
 
@@ -170,13 +170,13 @@ main(int argc, char **argv)
 	if (!setlocale(LC_CTYPE, ""))
 		die("couldn't set locale\n");
 
-	config = config_default();
+	config_init();
 	read_config_files();
 
 	/* setup windows */
 	for (i = 0; i < 2; i++) {
 		data.win[i] = dwindow_create();
-		dwindow_set_sort(data.win[i], config->sort);
+		dwindow_set_sort(data.win[i], config()->sort);
 		dwindow_read(data.win[i], paths[i]);
 	}
 

@@ -17,14 +17,17 @@ typedef struct {
 	int view;
 } config_t;
 
-/* creates a config struct with default values */
-config_t *config_default();
+/* return pointer to config struct, TODO: make a better solution than this */
+const config_t *config();
 
-/* free a config struct and all its data */
-void config_free(config_t *config);
+/* close config and free all allocated data */
+void config_close();
 
-/* read data in to config struct from file, returns 0 if ok, else errno */
-int config_read(config_t *config, const char *path);
+/* initializes config and sets default values */
+void config_init();
+
+/* read data in to config from file, returns 0 if ok, else errno */
+int config_read(const char *path);
 
 /* create a string containing the absolute path to the configuration directory,
  * returns NULL if not successful */

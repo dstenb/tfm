@@ -1,41 +1,37 @@
 #include "config.h"
 
-config_t *
-config_default()
+static config_t configuration;
+
+const config_t *config()
 {
-	config_t *config;
-
-	if (!(config = calloc(1, sizeof(config_t))))
-		oom();
-
-	if (!(config->default_program = strdup("vim")))
-		oom();
-	if (!(config->timefmt = strdup("%y/%m/%d")))
-		oom();
-	if (!(config->theme = strdup("theme")))
-		oom();
-
-	config->show_dot = 0;
-	config->sort = BY_NAME;
-	config->view = V_VERTICAL;
-
-	return config;
+	return &configuration;
 }
 
 void
-config_free(config_t *config)
+config_close()
 {
-	if (!config)
-		return;
+	free(configuration.default_program);
+	free(configuration.timefmt);
+	free(configuration.theme);
+}
 
-	free(config->default_program);
-	free(config->timefmt);
-	free(config->theme);
-	free(config);
+void
+config_init()
+{
+	if (!(configuration.default_program = strdup("vim")))
+		oom();
+	if (!(configuration.timefmt = strdup("%y/%m/%d")))
+		oom();
+	if (!(configuration.theme = strdup("theme")))
+		oom();
+
+	configuration.show_dot = 0;
+	configuration.sort = BY_NAME;
+	configuration.view = V_VERTICAL;
 }
 
 int
-config_read(config_t *config, const char *path)
+config_read(const char *path)
 {
 	FILE *fp;
 	char buf[4096];
@@ -59,9 +55,9 @@ config_read(config_t *config, const char *path)
 
 		if (streq(n, "show_dotfiles")) {
 			if (streq(v, "true")) {
-				config->show_dot = 1;
+				configuration.show_dot = 1;
 			} else if (streq(v, "false")) {
-				config->show_dot = 0;
+				configuration.show_dot = 0;
 			} else {
 				die("%s:%i, unknown value '%s' for '%s'"
 						" (exp. 'true', 'false')\n",
@@ -69,11 +65,11 @@ config_read(config_t *config, const char *path)
 			}
 		} else if (streq(n, "sort_by")) {
 			if (streq(v, "name")) {
-				config->sort = BY_NAME;
+				configuration.sort = BY_NAME;
 			} else if (streq(v, "size")) {
-				config->sort = BY_SIZE;
+				configuration.sort = BY_SIZE;
 			} else if (streq(v, "mtime")) {
-				config->sort = BY_MTIME;
+				configuration.sort = BY_MTIME;
 			} else {
 				die("%s:%i: unknown value '%s' for '%s'"
 						" (exp. 'name', 'size', "
@@ -81,20 +77,20 @@ config_read(config_t *config, const char *path)
 						path, i, v, n);
 			}
 		} else if (streq(n, "default_program")) {
-			free(config->default_program);
-			if (!(config->default_program = strdup(v)))
+			free(configuration.default_program);
+			if (!(configuration.default_program = strdup(v)))
 				oom();
 		} else if (streq(n, "time_fmt")) {
-			free(config->timefmt);
-			if (!(config->timefmt = strdup(v)))
+			free(configuration.timefmt);
+			if (!(configuration.timefmt = strdup(v)))
 				oom();
 		} else if (streq(n, "view")) {
 			if (streq(v, "single")) {
-				config->view = V_SINGLE;
+				configuration.view = V_SINGLE;
 			} else if (streq(v, "horizontal")) {
-				config->view = V_HORIZONTAL;
+				configuration.view = V_HORIZONTAL;
 			} else if (streq(v, "vertical")) {
-				config->view = V_VERTICAL;
+				configuration.view = V_VERTICAL;
 			} else {
 				die("%s:%i: unknown value '%s' for '%s'"
 						" (exp. 'single', "
@@ -102,8 +98,8 @@ config_read(config_t *config, const char *path)
 						path, i, v, n);
 			}
 		} else if (streq(n, "theme")) {
-			free(config->theme);
-			if (!(config->theme = strdup(v)))
+			free(configuration.theme);
+			if (!(configuration.theme = strdup(v)))
 				oom();
 		} else {
 			die("%s:%i: unknown name '%s'\n", path, i, n);

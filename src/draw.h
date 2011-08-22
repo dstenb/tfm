@@ -6,6 +6,7 @@
 #include <pwd.h>
 #include <grp.h>
 
+#include "config.h"
 #include "finfo.h"
 #include "message.h"
 #include "ui.h"

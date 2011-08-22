@@ -20,7 +20,7 @@ print_file(WINDOW *win, const finfo *fp, int y, int w, int selected)
 		snprintf(buf, w / 2, " %s", fp->name);
 
 	time = localtime(&fp->mtime);
-	strftime(timestr, sizeof(timestr), "%y/%m/%d", time);
+	strftime(timestr, sizeof(timestr), config()->timefmt, time);
 	sstr = strsize(fp->size);
 
 	ui_printline(win, y, attr, "%*s %*s %*s", - (w / 2) + 1, buf, 

@@ -26,4 +26,8 @@ void config_free(config_t *config);
 /* read data in to config struct from file, returns 0 if ok, else errno */
 int config_read(config_t *config, const char *path);
 
+/* create a string containing the absolute path to the configuration directory,
+ * returns NULL if not successful */
+char *get_conf_dir();
+
 #endif

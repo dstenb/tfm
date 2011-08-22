@@ -113,3 +113,19 @@ config_read(config_t *config, const char *path)
 	fclose(fp);
 	return 0;
 }
+
+char *
+get_conf_dir()
+{
+	char buf[PATH_MAX];
+	char *home;
+	char *path = NULL;
+
+	if ((home = getenv("HOME"))) {
+		snprintf(buf, sizeof(buf), "%s/.tfm", home);
+		if (!(path = strdup(buf)))
+			oom();
+	}
+
+	return path;
+}

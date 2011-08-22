@@ -17,7 +17,6 @@
 #include "utils.h"
 
 static void atexit_handler();
-static char *get_conf_dir();
 static void handle_resize();
 static void main_loop();
 static void read_config_files();
@@ -37,24 +36,6 @@ atexit_handler()
 	states_clear();
 	dwindow_free(data.win[0]);
 	dwindow_free(data.win[1]);
-}
-
-/* create a string containing the absolute path to the configuration directory,
- * returns NULL if not successful */
-char *
-get_conf_dir()
-{
-	char buf[PATH_MAX];
-	char *home;
-	char *path = NULL;
-
-	if ((home = getenv("HOME"))) {
-		snprintf(buf, sizeof(buf), "%s/.tfm", home);
-		if (!(path = strdup(buf)))
-			oom();
-	}
-
-	return path;
 }
 
 /* get terminal size and fix window sizes */

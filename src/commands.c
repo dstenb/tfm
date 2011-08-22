@@ -128,6 +128,17 @@ cmd_set_win(wdata_t *data, const arg_t *arg)
 }
 
 int
+cmd_shell(wdata_t *data, const arg_t *arg)
+{
+	if (data->wsel->path) {
+		ui_close();
+		chdir(data->wsel->path);
+		system("/bin/sh");
+		ui_init();
+	}
+}
+
+int
 cmd_toggle_dotfiles(wdata_t *data, const arg_t *arg)
 {
 	arg_t parg;

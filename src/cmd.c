@@ -33,7 +33,8 @@ static void replace_first_word(char *txt, size_t size, const char *nw);
 static cmd cmds[] = {
 	{ "cd", cmd_set_path },
 	{ "q", cmd_quit },
-	{ "quit", cmd_quit }
+	{ "quit", cmd_quit },
+	{ "sh", cmd_shell }
 };
 
 struct {

@@ -53,6 +53,8 @@ int cmd_set_view(wdata_t *data, const arg_t *arg);
 /* set selected window */
 int cmd_set_win(wdata_t *data, const arg_t *arg);
 
+int cmd_shell(wdata_t *data, const arg_t *arg);
+
 /* toggle if dotfiles should be shown for selected dwindow */
 int cmd_toggle_dotfiles(wdata_t *data, const arg_t *arg);
 

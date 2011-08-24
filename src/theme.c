@@ -4,7 +4,8 @@
 static int parse_color(const char *str, int *color);
 
 /* parses a theme line, returns 1 if ok, else 0 */
-static int parse_line(char *line, int *id, int *fg, int *bg);
+static int parse_line(const char *path, int nr, 
+		char *line, int *id, int *fg, int *bg);
 
 /* array for all theme data */
 struct {
@@ -69,7 +70,7 @@ parse_color(const char *str, int *color)
 }
 
 int
-parse_line(char *line, int *id, int *fg, int *bg)
+parse_line(const char *path, int nr, char *line, int *id, int *fg, int *bg)
 {
 	char *name;
 	char *values[2];
@@ -87,13 +88,17 @@ parse_line(char *line, int *id, int *fg, int *bg)
 			*id = c_identifiers[i].v;
 
 			if (!values[0] || !parse_color(values[0], fg))
-				return 0;
-			if (!values[1] || !parse_color(values[1], bg))
-				return 0;
-			break;
+				die("%s:%i: bad fg value '%s'\n", path, nr,
+						values[0] ? values[0] : "");
+			else if (!values[1] || !parse_color(values[1], bg))
+				die("%s:%i: bad bg value '%s'\n", path, nr,
+						values[1] ? values[1] : "");
+			
+			return 1;
 		}
 	}
 
+	die("%s:%i: invalid identifier '%s'\n", path, nr, name);
 	return 1;
 }
 
@@ -115,17 +120,20 @@ theme_read_from_file(const char *path)
 	int id = 0;
 	int fg = COLOR_WHITE;
 	int bg = COLOR_BLACK;
+	int line = 1;
 
 	if (!(fp = fopen(path, "r")))
 		return errno;
 
 	while(fgets(buf, sizeof(buf), fp)) {
-		if (parse_line(buf, &id, &fg, &bg)) {
+		if (parse_line(path, line, buf, &id, &fg, &bg)) {
 			if ((id - 1) >= 0 && (id - 1) < ARRSIZE(c_data)) {
 				c_data[id - 1].fg = fg;
 				c_data[id - 1].bg = bg;
 			}
 		}
+		
+		line++;
 	}
 
 	fclose(fp);

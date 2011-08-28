@@ -13,6 +13,8 @@ ui_init()
 	start_color();
 	use_default_colors();
 
+	mousemask(ALL_MOUSE_EVENTS, NULL);
+
 	refresh();
 }
 

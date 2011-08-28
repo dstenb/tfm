@@ -31,6 +31,7 @@ list_state()
 	if (!(s = malloc(sizeof(state))))
 		oom();
 	s->keycmd = list_handle_key;
+	s->mousecmd = list_handle_mouse;
 	s->activate = NULL;
 	s->normal_bindings = 1;
 	return s;
@@ -45,6 +46,25 @@ list_handle_key(wdata_t *data, int c)
 		if (c == list_cmds[i].key) {
 			list_cmds[i].func(data, &list_cmds[i].arg);
 			break;
+		}
+	}
+}
+
+void
+list_handle_mouse(wdata_t *data, const MEVENT *event)
+{
+	arg_t arg;
+	int y, x;
+	getmaxyx(stdscr, y, x);
+
+	if (data->view == V_SINGLE && data->wsel->path) {
+		if (1 <= event->y && event->y <= (y - 2)) {
+			arg.i = data->wsel->start.i + event->y - 1;
+			cmd_set_selected(data, &arg);
+
+			if (event->bstate & BUTTON3_CLICKED) {
+				cmd_action(data, NULL);
+			}
 		}
 	}
 }

@@ -65,6 +65,18 @@ states_handlekey(wdata_t *data, int c)
 }
 
 void
+states_handlemouse(wdata_t *data, const MEVENT *event)
+{
+	if (!c_node)
+		return;
+
+	if (c_node && c_node->state->mousecmd)
+		c_node->state->mousecmd(data, event);
+}
+
+
+
+void
 states_pop()
 {
 	snode *tmp;

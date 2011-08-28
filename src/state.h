@@ -13,6 +13,7 @@
 
 typedef struct {
 	void (*keycmd) (wdata_t *data, int c);
+	void (*mousecmd) (wdata_t *data, const MEVENT *event);
 	void (*activate) ();
 	int normal_bindings;
 } state;
@@ -22,6 +23,8 @@ void states_clear();
 
 /* handle key event for current state */
 void states_handlekey(wdata_t *data, int c);
+
+void states_handlemouse(wdata_t *data, const MEVENT *event);
 
 /* remove current satte */
 void states_pop();

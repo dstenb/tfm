@@ -246,6 +246,7 @@ cmd_state()
 	if (!(s = malloc(sizeof(state))))
 		die("out of memory\n");
 	s->keycmd = cmd_handle_key;
+	s->mousecmd = NULL;
 	s->activate = activate;
 	s->normal_bindings = 0;
 	return s;

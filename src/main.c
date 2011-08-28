@@ -41,12 +41,8 @@ atexit_handler()
 void
 handle_resize()
 {
-	int y, x;
-
-	getmaxyx(stdscr, y, x);
-
 	wdata_lock_mutex(&data);
-	wdata_handle_resize(&data, y, x);
+	wdata_handle_resize(&data);
 	wdata_unlock_mutex(&data);
 }
 

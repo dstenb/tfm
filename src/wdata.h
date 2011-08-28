@@ -18,7 +18,7 @@ typedef struct {
 	pthread_mutex_t mutex;
 } wdata_t;
 
-void wdata_handle_resize(wdata_t *data, int y, int x);
+void wdata_handle_resize(wdata_t *data);
 
 void wdata_set_view(wdata_t *data, view_t view);
 

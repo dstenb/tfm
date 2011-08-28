@@ -53,6 +53,7 @@ handle_resize()
 void
 main_loop()
 {
+	MEVENT event;
 	int i;
 
 	wdata_lock_mutex(&data);
@@ -68,11 +69,18 @@ main_loop()
 
 		if (i == KEY_RESIZE) {
 			handle_resize();
+		} else if (i == KEY_MOUSE) {
+			if (getmouse(&event) == OK) {
+				wdata_lock_mutex(&data);
+				states_handlemouse(&data, &event);
+				wdata_unlock_mutex(&data);
+
+			}
+		} else {	
+			wdata_lock_mutex(&data);
+			states_handlekey(&data, i);
+			wdata_unlock_mutex(&data);
 		}
-		
-		wdata_lock_mutex(&data);
-		states_handlekey(&data, i);
-		wdata_unlock_mutex(&data);
 	}
 }
 

@@ -9,7 +9,7 @@
 #include "message.h"
 #include "state.h"
 
-state *cmd_state();
+state *cmd_state(void);
 
 void cmd_handle_key(wdata_t *data, int c);
 

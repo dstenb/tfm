@@ -16,13 +16,13 @@
 #include "ui.h"
 #include "utils.h"
 
-static void atexit_handler();
-static void handle_resize();
-static void main_loop();
-static void read_config_files();
+static void atexit_handler(void);
+static void handle_resize(void);
+static void main_loop(void);
+static void read_config_files(void);
 static void update(dwindow *dwin);
 static void *update_loop(void *v);
-static void usage();
+static void usage(void);
 
 static char *cmdname = NULL;
 static wdata_t data;

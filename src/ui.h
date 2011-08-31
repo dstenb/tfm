@@ -11,11 +11,11 @@
 #include <ncurses.h>
 #endif
 
-void ui_init();
+void ui_init(void);
 
-void ui_close();
+void ui_close(void);
 
-int ui_getchar();
+int ui_getchar(void);
 
 void ui_print(WINDOW *win, int y, int x, int l, int attr, const char *fmt, ...);
 

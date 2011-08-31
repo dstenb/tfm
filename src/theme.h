@@ -31,7 +31,7 @@ typedef enum {
 #define N_COLORS 9
 
 /* initialize the theme */
-void theme_init();
+void theme_init(void);
 
 /* read and set theme data from a file, 
  * returns 0 if successful, else errno */

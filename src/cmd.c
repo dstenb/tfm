@@ -15,17 +15,16 @@ struct ac_node {
 	ac_node *next;
 };
 
-static void activate();
+static void activate(void);
 static void execute(wdata_t *data);
-static void reset();
+static void reset(void);
 
-static void autocomplete_clear();
+static void autocomplete_clear(void);
 static void autocomplete_free(ac_node *anode);
 static ac_node *autocomplete_get(const char *str);
-static void autocomplete_handle();
-static int autocomplete_length(ac_node *anode);
-static void autocomplete_next();
-static void autocomplete_retrieve();
+void autocomplete_handle(void);
+static void autocomplete_next(void);
+static void autocomplete_retrieve(void);
 static char *get_first_word(const char *txt);
 static int no_of_words(const char *txt);
 static void replace_first_word(char *txt, size_t size, const char *nw);
@@ -147,18 +146,6 @@ autocomplete_handle()
 	} else {
 		/* handle argument completition */
 	}
-}
-
-int
-autocomplete_length(ac_node *anode)
-{
-	int i;
-
-	for (i = 0; anode; i++, anode = anode->next) {
-		NULL;
-	}
-
-	return i;
 }
 
 void

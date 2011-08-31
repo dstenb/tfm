@@ -16,7 +16,7 @@
 void die(const char *fmt, ...);
 
 /* prints out-of-memory message and exits */
-void oom();
+void oom(void);
 
 void prevdir(char *path);
 

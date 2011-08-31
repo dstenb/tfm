@@ -38,7 +38,7 @@ typedef struct {
 } dwindow;
 
 /* create a dwindow struct */
-dwindow *dwindow_create();
+dwindow *dwindow_create(void);
 
 /* fix bounds so the start pointer is set correctly */
 void dwindow_fix_bounds(dwindow *dwin);

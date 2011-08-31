@@ -11,7 +11,7 @@
 
 #include "commands.h"
 
-state *list_state();
+state *list_state(void);
 
 void list_handle_key(wdata_t *data, int c);
 

@@ -5,7 +5,9 @@ die(const char *fmt, ...)
 {
 	va_list val;
 
+#ifdef DIE_UI_FIX
 	ui_close();
+#endif
 
 	va_start(val, fmt);
 	vfprintf(stderr, fmt, val);
@@ -29,6 +31,23 @@ prevdir(char *path)
 			*(p + 1) = '\0';
 		else
 			*p = '\0';
+	}
+}
+
+int
+spawn(char **argv, int foreground)
+{
+	pid_t pid;
+
+	if ((pid = fork()) == 0) {
+		execvp(*argv, argv);
+		exit(1);
+	} else if (pid > 0) {
+		if (foreground)
+			wait(NULL);
+		return 0;
+	} else {
+		return errno;
 	}
 }
 

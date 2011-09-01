@@ -1,12 +1,22 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
-#include <stdlib.h>
+#include <errno.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
+#define DIE_UI_FIX 1 /* remove this if you don't want
+			the ui to close when using die(),
+			e.g. for saner dependencies when
+			testing and such */
+
+#ifdef DIE_UI_FIX
 #include "ui.h"
+#endif
 
 #define ARRSIZE(x) (int)(sizeof(x) / sizeof(*x))
 
@@ -19,6 +29,9 @@ void die(const char *fmt, ...);
 void oom(void);
 
 void prevdir(char *path);
+
+/* spawn a process. returns 0 if successful, or else errno */
+int spawn(char **argv, int foreground);
 
 /* string duplicate */
 char *strsdup(const char *str);

@@ -3,6 +3,7 @@
 int
 cmd_action(wdata_t *data, const arg_t *arg)
 {
+	(void)arg;
 	if (data->wsel->sel.p && F_ISDIR(data->wsel->sel.p)) {
 		dwindow_read(data->wsel, data->wsel->sel.p->path);
 	}
@@ -13,6 +14,7 @@ cmd_action(wdata_t *data, const arg_t *arg)
 int
 cmd_go_down(wdata_t *data, const arg_t *arg)
 {
+	(void)arg;
 	dwindow_set_selected(data->wsel, data->wsel->sel.i + 1);
 	set_message(M_INFO, "");
 	return 1;
@@ -21,6 +23,7 @@ cmd_go_down(wdata_t *data, const arg_t *arg)
 int
 cmd_go_end(wdata_t *data, const arg_t *arg)
 {
+	(void)arg;
 	dwindow_set_selected(data->wsel, data->wsel->size);
 	set_message(M_INFO, "");
 	return 1;
@@ -29,6 +32,7 @@ cmd_go_end(wdata_t *data, const arg_t *arg)
 int
 cmd_go_home(wdata_t *data, const arg_t *arg)
 {
+	(void)arg;
 	dwindow_set_selected(data->wsel, 0);
 	set_message(M_INFO, "");
 	return 1;
@@ -37,6 +41,7 @@ cmd_go_home(wdata_t *data, const arg_t *arg)
 int 
 cmd_go_up(wdata_t *data, const arg_t *arg)
 {
+	(void)arg;
 	if (data->wsel->sel.i > 0) {
 		dwindow_set_selected(data->wsel, data->wsel->sel.i - 1);
 	}
@@ -48,6 +53,8 @@ cmd_go_up(wdata_t *data, const arg_t *arg)
 int
 cmd_quit(wdata_t *data, const arg_t *arg)
 {
+	(void)data;
+	(void)arg;
 	exit(EXIT_SUCCESS);
 }
 
@@ -131,6 +138,7 @@ int
 cmd_shell(wdata_t *data, const arg_t *arg)
 {
 	char *shell = getenv("SHELL");
+	(void)arg;
 
 	if (!shell)
 		shell = "/bin/sh";
@@ -141,12 +149,15 @@ cmd_shell(wdata_t *data, const arg_t *arg)
 		system(shell);
 		ui_init();
 	}
+
+	return 1;
 }
 
 int
 cmd_toggle_dotfiles(wdata_t *data, const arg_t *arg)
 {
 	arg_t parg;
+	(void)arg;
 
 	parg.i = !data->wsel->show_dot;
 	cmd_set_dotfiles(data, &parg);
@@ -158,6 +169,7 @@ int
 cmd_toggle_sort(wdata_t *data, const arg_t *arg)
 {
 	arg_t parg;
+	(void)arg;
 
 	parg.i = (data->wsel->sort + 1) % N_SORTMETHODS;
 	cmd_set_sort(data, &parg);
@@ -169,6 +181,7 @@ int
 cmd_toggle_view(wdata_t *data, const arg_t *arg)
 {
 	arg_t parg;
+	(void)arg;
 
 	parg.i = (data->view + 1) % N_VIEWS;
 	cmd_set_view(data, &parg);
@@ -180,7 +193,8 @@ int
 cmd_toggle_win(wdata_t *data, const arg_t *arg)
 {
 	arg_t parg;
-	
+	(void)arg;
+
 	parg.i = data->wsel == data->win[0];
 	cmd_set_win(data, &parg);
 

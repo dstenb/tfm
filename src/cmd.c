@@ -16,24 +16,22 @@ struct ac_node {
 };
 
 static void activate(void);
-static void execute(wdata_t *data);
+static void execute(wdata_t *);
+static void handle_key(wdata_t *, int);
 static void reset(void);
 
 static void autocomplete_clear(void);
-static void autocomplete_free(ac_node *anode);
-static ac_node *autocomplete_get(const char *str);
+static void autocomplete_free(ac_node *);
+static ac_node *autocomplete_get(const char *);
 void autocomplete_handle(void);
 static void autocomplete_next(void);
 static void autocomplete_retrieve(void);
-static char *get_first_word(const char *txt);
-static int no_of_words(const char *txt);
-static void replace_first_word(char *txt, size_t size, const char *nw);
 
 static cmd cmds[] = {
-	{ "cd", cmd_set_path },
-	{ "q", cmd_quit },
+	{ "sh", cmd_shell },
 	{ "quit", cmd_quit },
-	{ "sh", cmd_shell }
+	{ "q", cmd_quit },
+	{ "cd", cmd_set_path }
 };
 
 struct {
@@ -101,13 +99,13 @@ autocomplete_clear()
 
 /* recursively free all nodes */
 void
-autocomplete_free(ac_node *anode)
+autocomplete_free(ac_node *node)
 {
 	ac_node *tmp;
 
-	while (anode) {
-		tmp = anode;
-		anode = anode->next;
+	while (node) {
+		tmp = node;
+		node = node->next;
 		free(tmp);
 	}
 }
@@ -116,35 +114,35 @@ autocomplete_free(ac_node *anode)
 ac_node *
 autocomplete_get(const char *str)
 {
-	ac_node *anode = NULL;
+	ac_node *node = NULL;
 	ac_node *tmp;
 	int i;
 
 	for (i = 0; i < ARRSIZE(cmds); i++) {
-		if (strstr(cmds[i].name, str) == cmds[i].name) {
+		if (strncmp(cmds[i].name, str, strlen(str)) == 0) {
 			if (!(tmp = malloc(sizeof(ac_node))))
 				oom();
-			tmp->next = anode;
+			tmp->next = node;
 			tmp->name = cmds[i].name;
-			anode = tmp;
+			node = tmp;
 		}
 	}
 
-	return anode;
+	return node;
 }
 
 /* handle autocomplete */
 void
 autocomplete_handle()
 {
-	if (no_of_words(cmd_data.buf) <= 1) {
+	if (strwcnt(cmd_data.buf) <= 1) {
 		if (ac_data.node) { /* change to next command */
 			autocomplete_next();
 		} else { /* retrieve autocomplete list */
 			autocomplete_retrieve();
 		}
 	} else {
-		/* handle argument completition */
+		/* handle argument completion */
 	}
 }
 
@@ -154,7 +152,7 @@ autocomplete_next()
 	if (!(ac_data.curr = ac_data.curr->next))
 		ac_data.curr = ac_data.node;
 
-	replace_first_word(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
+	strrfw(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
 	cmd_data.bufpos = strlen(cmd_data.buf);
 	set_message(M_INFO, ":%s", cmd_data.buf);
 }
@@ -164,7 +162,7 @@ autocomplete_retrieve()
 {
 	char *cmdname;
 
-	if (!(cmdname = get_first_word(cmd_data.buf))) {
+	if (!(cmdname = strfw(cmd_data.buf))) {
 		cmdname = strdup("");
 	}
 
@@ -173,56 +171,12 @@ autocomplete_retrieve()
 	free(cmdname);
 
 	if (ac_data.curr) {
-		replace_first_word(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
+		strrfw(cmd_data.buf, CMD_BUFSIZE, ac_data.curr->name);
 		cmd_data.bufpos = strlen(cmd_data.buf);
 		set_message(M_INFO, ":%s", cmd_data.buf);
 	} else {
 		set_message(M_ERROR, "'%s': no such command", cmd_data.buf);
 	}
-}
-
-/* get first word from text */
-char *
-get_first_word(const char *txt)
-{
-	char buf[strlen(txt) + 1];
-	char *p;
-	char *q;
-
-	strcpy(buf, txt);
-	p = strtok_r(buf, " \t", &q);
-
-	return p ? strdup(p) : NULL;
-}
-
-int
-no_of_words(const char *txt)
-{
-	int i = 0;
-	int at_word = 0;
-
-	for ( ; *txt; txt++) {
-		if (*txt == ' ') {
-			at_word = 0;
-		} else if (!at_word) {
-			at_word = 1;
-			i++;
-		}
-	}
-
-	return i;
-}
-
-void
-replace_first_word(char *txt, size_t size, const char *nw)
-{
-	char buf[size];
-	char *q;
-
-	strcpy(buf, txt);
-	strtok_r(buf, " \t", &q);
-
-	snprintf(txt, size, "%s%s", nw, q);
 }
 
 state *
@@ -232,7 +186,7 @@ cmd_state()
 
 	if (!(s = malloc(sizeof(state))))
 		die("out of memory\n");
-	s->keycmd = cmd_handle_key;
+	s->keycmd = handle_key;
 	s->mousecmd = NULL;
 	s->activate = activate;
 	s->normal_bindings = 0;
@@ -240,7 +194,7 @@ cmd_state()
 }
 
 void
-cmd_handle_key(wdata_t *data, int c)
+handle_key(wdata_t *data, int c)
 {
 	if (c == 27) {
 		reset();

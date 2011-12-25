@@ -38,4 +38,13 @@ char *strsdup(const char *str);
 
 char *strsize(size_t size);
 
+/* count number of words in a string */
+int strwcnt(const char *);
+
+/* return allocated string of first word of the given string */
+char *strfw(const char *);
+
+/* replace first word in a string */
+void strrfw(char *, size_t, const char *);
+
 #endif

@@ -75,3 +75,46 @@ strsize(size_t size)
 	snprintf(buf, sizeof(buf), "%.1f %s", f, s);
 	return strdup(buf);
 }
+
+int
+strwcnt(const char *str)
+{
+	int i = 0;
+	int word = 0;
+
+	for ( ; *str; str++) {
+		if (*str == ' ') {
+			word = 0;
+		} else if (!word) {
+			word = 1;
+			i++;
+		}
+	}
+
+	return i;
+}
+
+char *
+strfw(const char *str)
+{
+	char buf[strlen(str) + 1];
+	char *p;
+	char *q;
+
+	strcpy(buf, str);
+	p = strtok_r(buf, " \t", &q);
+
+	return p ? strdup(p) : NULL;
+}
+
+void
+strrfw(char *str, size_t size, const char *word)
+{
+	char buf[size];
+	char *q;
+
+	strcpy(buf, str);
+	strtok_r(buf, " \t", &q);
+
+	snprintf(str, size, "%s%s", word, q);
+}

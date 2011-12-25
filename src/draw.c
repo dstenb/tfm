@@ -69,12 +69,11 @@ get_attr(const finfo *fp, int selected)
 {
 	if (selected)
 		return COLOR_PAIR(C_SELECTED) | A_BOLD;
-	if (F_ISDIR(fp))
+	else if (F_ISDIR(fp))
 		return COLOR_PAIR(C_DIRECTORY) | A_BOLD;
-	if (F_ISLNK(fp))
+	else if (F_ISLNK(fp))
 		return COLOR_PAIR(C_SYMLINK);
-	else
-		return COLOR_PAIR(C_FILE);
+	return COLOR_PAIR(C_FILE);
 }
 
 void
@@ -86,10 +85,10 @@ draw_dwin(WINDOW *win, dwindow *dwin, int selected)
 
 	werase(win);
 	getmaxyx(win, y, x);
-	
+
 	ui_printline(win, 0, COLOR_PAIR(C_TOPBAR) | (selected ? A_BOLD : A_NORMAL),
 			" [%i / %i] %s", dwin->sel.i + 1, dwin->size, dwin->path);
-	
+
 	fp = dwin->start.p;
 
 	for (i = 1; i < y; i++) {
@@ -100,7 +99,7 @@ draw_dwin(WINDOW *win, dwindow *dwin, int selected)
 			ui_printline(win, i, COLOR_PAIR(C_FILE), "");
 		}
 	}
-	
+
 	wrefresh(win);
 
 }
@@ -116,7 +115,7 @@ draw(wdata_t *data)
 	if (data->view == V_VERTICAL) {
 		win[0] = newwin(y - 2, x / 2, 0, 0);
 		win[1] = newwin(y - 2, x / 2, 0, x/2);
-		
+
 		draw_dwin(win[0], data->win[0], data->win[0] == data->wsel);
 		draw_dwin(win[1], data->win[1], data->win[1] == data->wsel);
 	} else if (data->view == V_HORIZONTAL) {
@@ -133,7 +132,7 @@ draw(wdata_t *data)
 
 	print_filebar(data->wsel->sel.p);
 	print_message(y - 1);
-	
+
 	refresh();
 
 	if (data->view == V_VERTICAL || data->view == V_HORIZONTAL) {

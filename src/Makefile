@@ -1,7 +1,7 @@
 CC = cc
-CLAGS = -std=c99 -O2 -D_GNU_SOURCE
-CFLAGS += -Wall -pedantic -Wextra -Wshadow -Wpointer-arith -Wcast-qual \
-	  -Wstrict-prototypes -Wmissing-prototypes
+CFLAGS = -std=c99 -Wall -O2 -pedantic -Wextra -D_GNU_SOURCE
+CFLAGS += -Wshadow -Wpointer-arith -Wcast-qual -Wstrict-prototypes \
+	  -Wmissing-prototypes
 CC_COMPILE = $(CC) $(CFLAGS) -c
 
 OBJFILES := $(patsubst %.c,%.o,$(wildcard *.c))

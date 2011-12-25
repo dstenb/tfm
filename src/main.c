@@ -1,9 +1,9 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <locale.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "config.h"
@@ -72,7 +72,7 @@ main_loop()
 				wdata_unlock_mutex(&data);
 
 			}
-		} else {	
+		} else {
 			wdata_lock_mutex(&data);
 			states_handlekey(&data, i);
 			wdata_unlock_mutex(&data);
@@ -102,7 +102,7 @@ read_config_files()
 				snprintf(path, sizeof(path), "%s/%s",
 						confdir, config()->theme);
 			}
-		
+
 			printf("theme_read: %s\n", path);
 			theme_read_from_file(path);
 		}
@@ -135,14 +135,14 @@ update_loop(void *v)
 
 	for (;;) {
 		sleep(1);
-		
+
 		wdata_lock_mutex(data);
 		update(data->win[0]);
 		update(data->win[1]);
 		draw(data);
 		wdata_unlock_mutex(data);
 	}
-	
+
 	return NULL;
 }
 

@@ -1,10 +1,9 @@
 #include "wdata.h"
 
-void
-wdata_handle_resize(wdata_t *data)
+void wdata_handle_resize(wdata_t * data)
 {
 	int y, x;
-	
+
 	getmaxyx(stdscr, y, x);
 	(void)x;
 
@@ -20,8 +19,7 @@ wdata_handle_resize(wdata_t *data)
 	}
 }
 
-int
-wdata_sel_win_index(wdata_t *data)
+int wdata_sel_win_index(wdata_t * data)
 {
 	if (data->wsel == data->win[0])
 		return 0;
@@ -30,8 +28,7 @@ wdata_sel_win_index(wdata_t *data)
 	return -1;
 }
 
-void
-wdata_set_view(wdata_t *data, view_t view)
+void wdata_set_view(wdata_t * data, view_t view)
 {
 	if (view < N_VIEWS) {
 		data->view = view;
@@ -39,16 +36,12 @@ wdata_set_view(wdata_t *data, view_t view)
 	}
 }
 
-void 
-wdata_lock_mutex(wdata_t *data)
+void wdata_lock_mutex(wdata_t * data)
 {
 	pthread_mutex_lock(&data->mutex);
 }
 
-void 
-wdata_unlock_mutex(wdata_t *data)
+void wdata_unlock_mutex(wdata_t * data)
 {
 	pthread_mutex_unlock(&data->mutex);
 }
-
-

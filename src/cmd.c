@@ -7,7 +7,7 @@ typedef struct ac_node ac_node;
 
 struct cmd {
 	char *name;
-	int (*func)(wdata_t *data, const arg_t *arg);
+	int (*func) (wdata_t * data, const arg_t * arg);
 };
 
 struct ac_node {
@@ -28,10 +28,10 @@ static void autocomplete_next(void);
 static void autocomplete_retrieve(void);
 
 static cmd cmds[] = {
-	{ "sh", cmd_shell },
-	{ "quit", cmd_quit },
-	{ "q", cmd_quit },
-	{ "cd", cmd_set_path }
+	{"sh", cmd_shell},
+	{"quit", cmd_quit},
+	{"q", cmd_quit},
+	{"cd", cmd_set_path}
 };
 
 struct {
@@ -44,15 +44,13 @@ struct {
 	ac_node *curr;
 } ac_data;
 
-void
-activate()
+void activate()
 {
 	reset();
 	set_message(M_INFO, ":%s", cmd_data.buf);
 }
 
-void
-execute(wdata_t *data)
+void execute(wdata_t * data)
 {
 	char tmp[CMD_BUFSIZE + 1];
 	char *name;
@@ -80,8 +78,7 @@ execute(wdata_t *data)
 	}
 }
 
-void
-reset()
+void reset()
 {
 	autocomplete_clear();
 
@@ -89,8 +86,7 @@ reset()
 }
 
 /* clear and reset autocomplete data */
-void
-autocomplete_clear()
+void autocomplete_clear()
 {
 	autocomplete_free(ac_data.node);
 	ac_data.node = NULL;
@@ -98,8 +94,7 @@ autocomplete_clear()
 }
 
 /* recursively free all nodes */
-void
-autocomplete_free(ac_node *node)
+void autocomplete_free(ac_node * node)
 {
 	ac_node *tmp;
 
@@ -111,8 +106,7 @@ autocomplete_free(ac_node *node)
 }
 
 /* get list of command names that begins with str */
-ac_node *
-autocomplete_get(const char *str)
+ac_node *autocomplete_get(const char *str)
 {
 	ac_node *node = NULL;
 	ac_node *tmp;
@@ -132,13 +126,12 @@ autocomplete_get(const char *str)
 }
 
 /* handle autocomplete */
-void
-autocomplete_handle()
+void autocomplete_handle()
 {
 	if (strwcnt(cmd_data.buf) <= 1) {
-		if (ac_data.node) { /* change to next command */
+		if (ac_data.node) {	/* change to next command */
 			autocomplete_next();
-		} else { /* retrieve autocomplete list */
+		} else {	/* retrieve autocomplete list */
 			autocomplete_retrieve();
 		}
 	} else {
@@ -146,8 +139,7 @@ autocomplete_handle()
 	}
 }
 
-void
-autocomplete_next()
+void autocomplete_next()
 {
 	if (!(ac_data.curr = ac_data.curr->next))
 		ac_data.curr = ac_data.node;
@@ -157,8 +149,7 @@ autocomplete_next()
 	set_message(M_INFO, ":%s", cmd_data.buf);
 }
 
-void
-autocomplete_retrieve()
+void autocomplete_retrieve()
 {
 	char *cmdname;
 
@@ -179,8 +170,7 @@ autocomplete_retrieve()
 	}
 }
 
-state *
-cmd_state()
+state *cmd_state()
 {
 	state *s;
 
@@ -193,8 +183,7 @@ cmd_state()
 	return s;
 }
 
-void
-handle_key(wdata_t *data, int c)
+void handle_key(wdata_t * data, int c)
 {
 	if (c == 27) {
 		reset();

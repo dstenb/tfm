@@ -7,13 +7,12 @@ struct snode {
 	snode *prev, *next;
 };
 
-static snode *snode_create(state *s, snode *p, snode *n);
-static void snode_free(snode *sl);
+static snode *snode_create(state * s, snode * p, snode * n);
+static void snode_free(snode * sl);
 
 static snode *c_node = NULL;
 
-snode *
-snode_create(state *s, snode *p, snode *n)
+snode *snode_create(state * s, snode * p, snode * n)
 {
 	snode *sl;
 
@@ -25,8 +24,7 @@ snode_create(state *s, snode *p, snode *n)
 	return sl;
 }
 
-void
-snode_free(snode *sl)
+void snode_free(snode * sl)
 {
 	if (sl) {
 		free(sl->state);
@@ -34,15 +32,13 @@ snode_free(snode *sl)
 	}
 }
 
-void
-states_clear()
+void states_clear()
 {
 	while (c_node)
 		states_pop();
 }
 
-void
-states_handlekey(wdata_t *data, int c)
+void states_handlekey(wdata_t * data, int c)
 {
 	int handled = 0;
 
@@ -59,13 +55,12 @@ states_handlekey(wdata_t *data, int c)
 		}
 
 	}
-	
+
 	if (!handled && c_node->state->keycmd)
 		c_node->state->keycmd(data, c);
 }
 
-void
-states_handlemouse(wdata_t *data, const MEVENT *event)
+void states_handlemouse(wdata_t * data, const MEVENT * event)
 {
 	if (!c_node)
 		return;
@@ -74,10 +69,7 @@ states_handlemouse(wdata_t *data, const MEVENT *event)
 		c_node->state->mousecmd(data, event);
 }
 
-
-
-void
-states_pop()
+void states_pop()
 {
 	snode *tmp;
 
@@ -92,12 +84,11 @@ states_pop()
 		c_node->state->activate();
 }
 
-void
-states_push(state *s)
+void states_push(state * s)
 {
 	assert(s);
 	c_node = snode_create(s, c_node, NULL);
-	
+
 	if (s->activate)
 		s->activate();
 }

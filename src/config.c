@@ -7,16 +7,14 @@ const config_t *config()
 	return &configuration;
 }
 
-void
-config_close()
+void config_close()
 {
 	free(configuration.default_program);
 	free(configuration.timefmt);
 	free(configuration.theme);
 }
 
-void
-config_init()
+void config_init()
 {
 	if (!(configuration.default_program = strdup("vim")))
 		oom();
@@ -30,8 +28,7 @@ config_init()
 	configuration.view = V_VERTICAL;
 }
 
-int
-config_read(const char *path)
+int config_read(const char *path)
 {
 	FILE *fp;
 	char buf[4096];
@@ -60,8 +57,7 @@ config_read(const char *path)
 				configuration.show_dot = 0;
 			} else {
 				die("%s:%i, unknown value '%s' for '%s'"
-						" (exp. 'true', 'false')\n",
-						path, i, v, n);
+				    " (exp. 'true', 'false')\n", path, i, v, n);
 			}
 		} else if (streq(n, "sort_by")) {
 			if (streq(v, "name")) {
@@ -72,9 +68,8 @@ config_read(const char *path)
 				configuration.sort = BY_MTIME;
 			} else {
 				die("%s:%i: unknown value '%s' for '%s'"
-						" (exp. 'name', 'size', "
-						"'mtime')\n",
-						path, i, v, n);
+				    " (exp. 'name', 'size', "
+				    "'mtime')\n", path, i, v, n);
 			}
 		} else if (streq(n, "default_program")) {
 			free(configuration.default_program);
@@ -93,9 +88,9 @@ config_read(const char *path)
 				configuration.view = V_VERTICAL;
 			} else {
 				die("%s:%i: unknown value '%s' for '%s'"
-						" (exp. 'single', "
-						"'horizontal', 'vertical'\n",
-						path, i, v, n);
+				    " (exp. 'single', "
+				    "'horizontal', 'vertical'\n",
+				    path, i, v, n);
 			}
 		} else if (streq(n, "theme")) {
 			free(configuration.theme);
@@ -110,8 +105,7 @@ config_read(const char *path)
 	return 0;
 }
 
-char *
-get_conf_dir()
+char *get_conf_dir()
 {
 	char buf[PATH_MAX];
 	char *home;

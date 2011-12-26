@@ -1,7 +1,6 @@
 #include "utils.h"
 
-void
-die(const char *fmt, ...)
+void die(const char *fmt, ...)
 {
 	va_list val;
 
@@ -15,14 +14,12 @@ die(const char *fmt, ...)
 	exit(EXIT_FAILURE);
 }
 
-void
-oom()
+void oom()
 {
 	die("out of memory\n");
 }
 
-void
-prevdir(char *path)
+void prevdir(char *path)
 {
 	char *p;
 
@@ -34,8 +31,7 @@ prevdir(char *path)
 	}
 }
 
-int
-spawn(char **argv, int foreground)
+int spawn(char **argv, int foreground)
 {
 	pid_t pid;
 
@@ -51,8 +47,30 @@ spawn(char **argv, int foreground)
 	}
 }
 
-char *
-strsize(size_t size)
+char *strfw(const char *str)
+{
+	char buf[strlen(str) + 1];
+	char *p;
+	char *q;
+
+	strcpy(buf, str);
+	p = strtok_r(buf, " \t", &q);
+
+	return p ? strdup(p) : NULL;
+}
+
+void strrfw(char *str, size_t size, const char *word)
+{
+	char buf[size];
+	char *q;
+
+	strcpy(buf, str);
+	strtok_r(buf, " \t", &q);
+
+	snprintf(str, size, "%s%s", word, q);
+}
+
+char *strsize(size_t size)
 {
 	char buf[32];
 	float f;
@@ -76,13 +94,12 @@ strsize(size_t size)
 	return strdup(buf);
 }
 
-int
-strwcnt(const char *str)
+int strwcnt(const char *str)
 {
 	int i = 0;
 	int word = 0;
 
-	for ( ; *str; str++) {
+	for (; *str; str++) {
 		if (*str == ' ') {
 			word = 0;
 		} else if (!word) {
@@ -92,29 +109,4 @@ strwcnt(const char *str)
 	}
 
 	return i;
-}
-
-char *
-strfw(const char *str)
-{
-	char buf[strlen(str) + 1];
-	char *p;
-	char *q;
-
-	strcpy(buf, str);
-	p = strtok_r(buf, " \t", &q);
-
-	return p ? strdup(p) : NULL;
-}
-
-void
-strrfw(char *str, size_t size, const char *word)
-{
-	char buf[size];
-	char *q;
-
-	strcpy(buf, str);
-	strtok_r(buf, " \t", &q);
-
-	snprintf(str, size, "%s%s", word, q);
 }

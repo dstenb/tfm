@@ -16,8 +16,7 @@ enum {
 
 typedef struct finfo finfo;
 
-struct finfo
-{
+struct finfo {
 	char *path;
 	char *name;
 	unsigned char flags;
@@ -33,16 +32,16 @@ struct finfo
 };
 
 /* sort comparison prototype */
-typedef int finfocmp(const finfo *, const finfo *b);
+typedef int finfocmp(const finfo *, const finfo * b);
 
 /* create a finfo struct */
 finfo *finfo_create(const char *dir, const char *name);
 
 /* free a finfo struct */
-void finfo_free(finfo *fp);
+void finfo_free(finfo * fp);
 
 /* stat and fill data. returns 0 if successful, errno otherwise */
-int finfo_stat(finfo *fp);
+int finfo_stat(finfo * fp);
 
 /* comparison functions */
 int finfocmp_name(const finfo *, const finfo *);

@@ -6,27 +6,41 @@ static void handle_key(wdata_t *, int);
 
 struct {
 	int key;
-	int (*func)(wdata_t *, const arg_t *);
+	int (*func) (wdata_t *, const arg_t *);
 	arg_t arg;
 } list_cmds[] = {
-	{ 13,  cmd_action,          { 0, 0 } },
-	{ 258, cmd_go_down,         { 0, 0 } },
-	{ 'j', cmd_go_down,         { 0, 0 } },
-	{ 'G', cmd_go_end,          { 0, 0 } },
-	{ 'g', cmd_go_home,         { 0, 0 } },
-	{ 259, cmd_go_up,           { 0, 0 } },
-	{ 'k', cmd_go_up,           { 0, 0 } },
-	{ 'u', cmd_set_path,        { 0, ".." } },
-	{ 'H', cmd_toggle_dotfiles, { 0, 0 } },
-	{ 'S', cmd_toggle_sort,     { 0, 0 } },
-	{ 'V', cmd_toggle_view,     { 0, 0 } },
-	{ ' ', cmd_toggle_win,      { 0, 0 } },
-	{ 't', cmd_toggle_win,      { 0, 0 } },
-	{ ':', cmd_chcmd,           { 0, 0 } }
+	{
+		13, cmd_action, {
+	0, 0}}, {
+		258, cmd_go_down, {
+	0, 0}}, {
+		'j', cmd_go_down, {
+	0, 0}}, {
+		'G', cmd_go_end, {
+	0, 0}}, {
+		'g', cmd_go_home, {
+	0, 0}}, {
+		259, cmd_go_up, {
+	0, 0}}, {
+		'k', cmd_go_up, {
+	0, 0}}, {
+		'u', cmd_set_path, {
+	0, ".."}}, {
+		'H', cmd_toggle_dotfiles, {
+	0, 0}}, {
+		'S', cmd_toggle_sort, {
+	0, 0}}, {
+		'V', cmd_toggle_view, {
+	0, 0}}, {
+		' ', cmd_toggle_win, {
+	0, 0}}, {
+		't', cmd_toggle_win, {
+	0, 0}}, {
+		':', cmd_chcmd, {
+	0, 0}}
 };
 
-state *
-list_state()
+state *list_state()
 {
 	state *s;
 
@@ -39,8 +53,7 @@ list_state()
 	return s;
 }
 
-void
-handle_key(wdata_t *data, int c)
+void handle_key(wdata_t * data, int c)
 {
 	int i;
 
@@ -52,8 +65,7 @@ handle_key(wdata_t *data, int c)
 	}
 }
 
-void
-handle_mouse(wdata_t *data, const MEVENT *event)
+void handle_mouse(wdata_t * data, const MEVENT * event)
 {
 	arg_t arg;
 	int y, x;
@@ -73,9 +85,9 @@ handle_mouse(wdata_t *data, const MEVENT *event)
 	} else if (data->view == V_VERTICAL) {
 		if (1 <= event->y && event->y <= (y - 2)) {
 			if ((wdata_sel_win_index(data) == 0 &&
-						(event->x > (x / 2))) ||
-					(wdata_sel_win_index(data) == 1 &&
-					 (event->x < (x / 2))))
+			     (event->x > (x / 2))) ||
+			    (wdata_sel_win_index(data) == 1 &&
+			     (event->x < (x / 2))))
 				cmd_toggle_win(data, NULL);
 
 			arg.i = data->wsel->start.i + event->y - 1;
@@ -105,8 +117,7 @@ handle_mouse(wdata_t *data, const MEVENT *event)
 	}
 }
 
-int
-cmd_chcmd(wdata_t *data, const arg_t *arg)
+int cmd_chcmd(wdata_t * data, const arg_t * arg)
 {
 	(void)data;
 	(void)arg;

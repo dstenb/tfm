@@ -1,12 +1,12 @@
 #include "draw.h"
 
-static void draw_dwin(WINDOW *win, dwindow *dwin, int selected);
-static int get_attr(const finfo *fp, int selected);
-static void print_file(WINDOW *win, const finfo *fp, int y, int w, int selected);
-static void print_filebar(const finfo *fp);
+static void draw_dwin(WINDOW * win, dwindow * dwin, int selected);
+static int get_attr(const finfo * fp, int selected);
+static void print_file(WINDOW * win, const finfo * fp, int y, int w,
+		       int selected);
+static void print_filebar(const finfo * fp);
 
-void
-print_file(WINDOW *win, const finfo *fp, int y, int w, int selected)
+void print_file(WINDOW * win, const finfo * fp, int y, int w, int selected)
 {
 	char buf[w / 2];
 	char *sstr;
@@ -23,14 +23,13 @@ print_file(WINDOW *win, const finfo *fp, int y, int w, int selected)
 	strftime(timestr, sizeof(timestr), config()->timefmt, time);
 	sstr = strsize(fp->size);
 
-	ui_printline(win, y, attr, "%*s %*s %*s", - (w / 2) + 1, buf, 
-			(w / 4) - 1, sstr, (w / 4) - 1, timestr);
+	ui_printline(win, y, attr, "%*s %*s %*s", -(w / 2) + 1, buf,
+		     (w / 4) - 1, sstr, (w / 4) - 1, timestr);
 
 	free(sstr);
 }
 
-void
-print_filebar(const finfo *fp)
+void print_filebar(const finfo * fp)
 {
 	int y, x;
 	char *sstr;
@@ -45,18 +44,16 @@ print_filebar(const finfo *fp)
 		u = getpwuid(fp->uid);
 		g = getgrgid(fp->gid);
 
-		ui_printline(stdscr, y, 
-			COLOR_PAIR(C_FILEBAR) | A_BOLD, 
-			" %*s %c%s%s%s %s %20s:%-20s",
-			1 - (x / 2),
-			fp->name,
-			F_ISDIR(fp) ? 'd' : '-',
-			strperm(fp->perms.u),
-			strperm(fp->perms.g),
-			strperm(fp->perms.o),
-			sstr, 
-			u ? u->pw_name : "", 
-			g ? g->gr_name : "");
+		ui_printline(stdscr, y,
+			     COLOR_PAIR(C_FILEBAR) | A_BOLD,
+			     " %*s %c%s%s%s %s %20s:%-20s",
+			     1 - (x / 2),
+			     fp->name,
+			     F_ISDIR(fp) ? 'd' : '-',
+			     strperm(fp->perms.u),
+			     strperm(fp->perms.g),
+			     strperm(fp->perms.o),
+			     sstr, u ? u->pw_name : "", g ? g->gr_name : "");
 
 		free(sstr);
 	} else {
@@ -64,8 +61,7 @@ print_filebar(const finfo *fp)
 	}
 }
 
-int
-get_attr(const finfo *fp, int selected)
+int get_attr(const finfo * fp, int selected)
 {
 	if (selected)
 		return COLOR_PAIR(C_SELECTED) | A_BOLD;
@@ -76,8 +72,7 @@ get_attr(const finfo *fp, int selected)
 	return COLOR_PAIR(C_FILE);
 }
 
-void
-draw_dwin(WINDOW *win, dwindow *dwin, int selected)
+void draw_dwin(WINDOW * win, dwindow * dwin, int selected)
 {
 	finfo *fp;
 	int i;
@@ -86,8 +81,9 @@ draw_dwin(WINDOW *win, dwindow *dwin, int selected)
 	werase(win);
 	getmaxyx(win, y, x);
 
-	ui_printline(win, 0, COLOR_PAIR(C_TOPBAR) | (selected ? A_BOLD : A_NORMAL),
-			" [%i / %i] %s", dwin->sel.i + 1, dwin->size, dwin->path);
+	ui_printline(win, 0,
+		     COLOR_PAIR(C_TOPBAR) | (selected ? A_BOLD : A_NORMAL),
+		     " [%i / %i] %s", dwin->sel.i + 1, dwin->size, dwin->path);
 
 	fp = dwin->start.p;
 
@@ -104,8 +100,7 @@ draw_dwin(WINDOW *win, dwindow *dwin, int selected)
 
 }
 
-void
-draw(wdata_t *data)
+void draw(wdata_t * data)
 {
 	WINDOW *win[2] = { NULL, NULL };
 	int y, x;
@@ -114,7 +109,7 @@ draw(wdata_t *data)
 
 	if (data->view == V_VERTICAL) {
 		win[0] = newwin(y - 2, x / 2, 0, 0);
-		win[1] = newwin(y - 2, x / 2, 0, x/2);
+		win[1] = newwin(y - 2, x / 2, 0, x / 2);
 
 		draw_dwin(win[0], data->win[0], data->win[0] == data->wsel);
 		draw_dwin(win[1], data->win[1], data->win[1] == data->wsel);

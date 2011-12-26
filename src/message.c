@@ -5,8 +5,7 @@ static int get_msg_attr(msg_t t);
 static msg_t type = C_INFO;
 static char buf[512];
 
-int
-get_msg_attr(msg_t t)
+int get_msg_attr(msg_t t)
 {
 	int attr;
 
@@ -20,14 +19,12 @@ get_msg_attr(msg_t t)
 	return attr;
 }
 
-void
-print_message(int y)
+void print_message(int y)
 {
 	ui_printline(stdscr, y, get_msg_attr(type), buf);
 }
 
-void
-set_message(msg_t t, const char *fmt, ...)
+void set_message(msg_t t, const char *fmt, ...)
 {
 	va_list val;
 

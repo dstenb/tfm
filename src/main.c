@@ -20,15 +20,14 @@ static void atexit_handler(void);
 static void handle_resize(void);
 static void main_loop(void);
 static void read_config_files(void);
-static void update(dwindow *dwin);
+static void update(dwindow * dwin);
 static void *update_loop(void *v);
 static void usage(void);
 
 static char *cmdname = NULL;
 static wdata_t data;
 
-void
-atexit_handler()
+void atexit_handler()
 {
 	config_close();
 	ui_close();
@@ -38,16 +37,14 @@ atexit_handler()
 }
 
 /* get terminal size and fix window sizes */
-void
-handle_resize()
+void handle_resize()
 {
 	wdata_lock_mutex(&data);
 	wdata_handle_resize(&data);
 	wdata_unlock_mutex(&data);
 }
 
-void
-main_loop()
+void main_loop()
 {
 	MEVENT event;
 	int i;
@@ -81,8 +78,7 @@ main_loop()
 }
 
 /* tries to read all configuration files */
-void
-read_config_files()
+void read_config_files()
 {
 	char *confdir;
 	char path[PATH_MAX + 1];
@@ -97,10 +93,10 @@ read_config_files()
 		if (config()->theme) {
 			if (*config()->theme == '/') {
 				snprintf(path, sizeof(path), "%s",
-						config()->theme);
+					 config()->theme);
 			} else {
 				snprintf(path, sizeof(path), "%s/%s",
-						confdir, config()->theme);
+					 confdir, config()->theme);
 			}
 
 			printf("theme_read: %s\n", path);
@@ -112,8 +108,7 @@ read_config_files()
 }
 
 /* reloads the dwindow if its been modified since last read */
-void
-update(dwindow *dwin)
+void update(dwindow * dwin)
 {
 	time_t otime;
 	int err;
@@ -128,8 +123,7 @@ update(dwindow *dwin)
 	}
 }
 
-void *
-update_loop(void *v)
+void *update_loop(void *v)
 {
 	wdata_t *data = v;
 
@@ -146,14 +140,12 @@ update_loop(void *v)
 	return NULL;
 }
 
-void
-usage()
+void usage()
 {
 	die("Usage: %s [-h]\n", cmdname);
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	char *paths[] = { NULL, NULL };
 	int i;

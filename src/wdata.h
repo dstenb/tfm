@@ -18,14 +18,14 @@ typedef struct {
 	pthread_mutex_t mutex;
 } wdata_t;
 
-void wdata_handle_resize(wdata_t *data);
+void wdata_handle_resize(wdata_t * data);
 
 int wdata_sel_win_index(wdata_t *);
 
-void wdata_set_view(wdata_t *data, view_t view);
+void wdata_set_view(wdata_t * data, view_t view);
 
-void wdata_lock_mutex(wdata_t *data);
+void wdata_lock_mutex(wdata_t * data);
 
-void wdata_unlock_mutex(wdata_t *data);
+void wdata_unlock_mutex(wdata_t * data);
 
 #endif

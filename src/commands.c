@@ -1,6 +1,6 @@
 #include "commands.h"
 
-int cmd_action(wdata_t * data, const arg_t * arg)
+int cmd_action(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
 	if (data->wsel->sel.p && F_ISDIR(data->wsel->sel.p)) {
@@ -10,7 +10,7 @@ int cmd_action(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_go_down(wdata_t * data, const arg_t * arg)
+int cmd_go_down(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
 	dwindow_set_selected(data->wsel, data->wsel->sel.i + 1);
@@ -18,7 +18,7 @@ int cmd_go_down(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_go_end(wdata_t * data, const arg_t * arg)
+int cmd_go_end(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
 	dwindow_set_selected(data->wsel, data->wsel->size);
@@ -26,7 +26,7 @@ int cmd_go_end(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_go_home(wdata_t * data, const arg_t * arg)
+int cmd_go_home(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
 	dwindow_set_selected(data->wsel, 0);
@@ -34,7 +34,7 @@ int cmd_go_home(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_go_up(wdata_t * data, const arg_t * arg)
+int cmd_go_up(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
 	if (data->wsel->sel.i > 0) {
@@ -45,14 +45,14 @@ int cmd_go_up(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_quit(wdata_t * data, const arg_t * arg)
+int cmd_quit(struct wdata *data, const struct arg *arg)
 {
 	(void)data;
 	(void)arg;
 	exit(EXIT_SUCCESS);
 }
 
-int cmd_set_dotfiles(wdata_t * data, const arg_t * arg)
+int cmd_set_dotfiles(struct wdata *data, const struct arg *arg)
 {
 	if (arg->i < 0 || arg->i > 1)
 		return 0;
@@ -64,7 +64,7 @@ int cmd_set_dotfiles(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_set_path(wdata_t * data, const arg_t * arg)
+int cmd_set_path(struct wdata *data, const struct arg *arg)
 {
 	if (data->wsel->path)
 		chdir(data->wsel->path);
@@ -72,21 +72,21 @@ int cmd_set_path(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_set_selected(wdata_t * data, const arg_t * arg)
+int cmd_set_selected(struct wdata *data, const struct arg *arg)
 {
 	dwindow_set_selected(data->wsel, arg->i);
 	set_message(M_INFO, "");
 	return 1;
 }
 
-int cmd_set_selected_r(wdata_t * data, const arg_t * arg)
+int cmd_set_selected_r(struct wdata *data, const struct arg *arg)
 {
 	dwindow_set_selected(data->wsel, data->wsel->sel.i + arg->i);
 	set_message(M_INFO, "");
 	return 1;
 }
 
-int cmd_set_sort(wdata_t * data, const arg_t * arg)
+int cmd_set_sort(struct wdata *data, const struct arg *arg)
 {
 	if (arg->i < 0 || arg->i >= N_SORTMETHODS)
 		return 0;
@@ -99,7 +99,7 @@ int cmd_set_sort(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_set_view(wdata_t * data, const arg_t * arg)
+int cmd_set_view(struct wdata *data, const struct arg *arg)
 {
 	if (arg->i < 0 || arg->i >= N_VIEWS)
 		return 0;
@@ -109,7 +109,7 @@ int cmd_set_view(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_set_win(wdata_t * data, const arg_t * arg)
+int cmd_set_win(struct wdata *data, const struct arg *arg)
 {
 	if (arg->i < 0 || arg->i >= 2)
 		return 0;
@@ -119,7 +119,7 @@ int cmd_set_win(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_shell(wdata_t * data, const arg_t * arg)
+int cmd_shell(struct wdata *data, const struct arg *arg)
 {
 	char *shell = getenv("SHELL");
 	(void)arg;
@@ -137,9 +137,9 @@ int cmd_shell(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_toggle_dotfiles(wdata_t * data, const arg_t * arg)
+int cmd_toggle_dotfiles(struct wdata *data, const struct arg *arg)
 {
-	arg_t parg;
+	struct arg parg;
 	(void)arg;
 
 	parg.i = !data->wsel->show_dot;
@@ -148,9 +148,9 @@ int cmd_toggle_dotfiles(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_toggle_sort(wdata_t * data, const arg_t * arg)
+int cmd_toggle_sort(struct wdata *data, const struct arg *arg)
 {
-	arg_t parg;
+	struct arg parg;
 	(void)arg;
 
 	parg.i = (data->wsel->sort + 1) % N_SORTMETHODS;
@@ -159,9 +159,9 @@ int cmd_toggle_sort(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_toggle_view(wdata_t * data, const arg_t * arg)
+int cmd_toggle_view(struct wdata *data, const struct arg *arg)
 {
-	arg_t parg;
+	struct arg parg;
 	(void)arg;
 
 	parg.i = (data->view + 1) % N_VIEWS;
@@ -170,9 +170,9 @@ int cmd_toggle_view(wdata_t * data, const arg_t * arg)
 	return 1;
 }
 
-int cmd_toggle_win(wdata_t * data, const arg_t * arg)
+int cmd_toggle_win(struct wdata *data, const struct arg *arg)
 {
-	arg_t parg;
+	struct arg parg;
 	(void)arg;
 
 	parg.i = data->wsel == data->win[0];

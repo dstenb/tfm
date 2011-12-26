@@ -1,6 +1,6 @@
 #include "message.h"
 
-static int get_msg_attr(msg_t t);
+static int get_msg_attr(msg_t);
 
 static msg_t type = C_INFO;
 static char buf[512];

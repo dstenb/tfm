@@ -1,8 +1,8 @@
 #include "config.h"
 
-static config_t configuration;
+static struct config configuration;
 
-const config_t *config()
+const struct config *config()
 {
 	return &configuration;
 }

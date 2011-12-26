@@ -11,7 +11,6 @@ void print_file(WINDOW * win, const struct finfo *fp, int y, int w,
 	char buf[w / 2];
 	char *sstr;
 	char timestr[64];
-	struct tm *time;
 	int attr = get_attr(fp, selected);
 
 	if (F_ISDIR(fp))
@@ -19,8 +18,8 @@ void print_file(WINDOW * win, const struct finfo *fp, int y, int w,
 	else
 		snprintf(buf, w / 2, " %s", fp->name);
 
-	time = localtime(&fp->mtime);
-	strftime(timestr, sizeof(timestr), config()->timefmt, time);
+	strftime(timestr, sizeof(timestr), config()->timefmt,
+		 localtime(&fp->mtime));
 	sstr = strsize(fp->size);
 
 	ui_printline(win, y, attr, "%*s %*s %*s", -(w / 2) + 1, buf,
@@ -100,7 +99,7 @@ void draw_dwin(WINDOW * win, struct dwindow *dwin, int selected)
 
 }
 
-void draw(wdata_t * data)
+void draw(struct wdata *data)
 {
 	WINDOW *win[2] = { NULL, NULL };
 	int y, x;

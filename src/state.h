@@ -12,8 +12,8 @@
 #include "wdata.h"
 
 struct state {
-	void (*keycmd) (wdata_t * data, int c);
-	void (*mousecmd) (wdata_t * data, const MEVENT * event);
+	void (*keycmd) (struct wdata *, int);
+	void (*mousecmd) (struct wdata *, const MEVENT *);
 	void (*activate) (void);
 	int normal_bindings;
 };
@@ -21,14 +21,14 @@ struct state {
 /* remove all states */
 void states_clear(void);
 
-struct state *state_create(void (*keycmd) (wdata_t *, int),
-			   void (*mousecmd) (wdata_t *, const MEVENT *),
+struct state *state_create(void (*keycmd) (struct wdata *, int),
+			   void (*mousecmd) (struct wdata *, const MEVENT *),
 			   void (*activate) (void), int);
 
 /* handle key event for current state */
-void states_handlekey(wdata_t *, int);
+void states_handlekey(struct wdata *, int);
 
-void states_handlemouse(wdata_t *, const MEVENT *);
+void states_handlemouse(struct wdata *, const MEVENT *);
 
 /* remove current satte */
 void states_pop(void);

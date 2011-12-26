@@ -8,17 +8,17 @@
 #include "wdata.h"
 #include "utils.h"
 
-typedef struct {
+struct config {
 	char *default_program;
 	char *theme;
 	char *timefmt;
 	int show_dot;
 	int sort;
 	int view;
-} config_t;
+};
 
 /* return pointer to config struct, TODO: make a better solution than this */
-const config_t *config(void);
+const struct config *config(void);
 
 /* close config and free all allocated data */
 void config_close(void);

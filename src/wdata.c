@@ -1,6 +1,6 @@
 #include "wdata.h"
 
-void wdata_handle_resize(wdata_t * data)
+void wdata_handle_resize(struct wdata *data)
 {
 	int y, x;
 
@@ -19,7 +19,7 @@ void wdata_handle_resize(wdata_t * data)
 	}
 }
 
-int wdata_sel_win_index(wdata_t * data)
+int wdata_sel_win_index(struct wdata *data)
 {
 	if (data->wsel == data->win[0])
 		return 0;
@@ -28,7 +28,7 @@ int wdata_sel_win_index(wdata_t * data)
 	return -1;
 }
 
-void wdata_set_view(wdata_t * data, view_t view)
+void wdata_set_view(struct wdata *data, view_t view)
 {
 	if (view < N_VIEWS) {
 		data->view = view;
@@ -36,12 +36,12 @@ void wdata_set_view(wdata_t * data, view_t view)
 	}
 }
 
-void wdata_lock_mutex(wdata_t * data)
+void wdata_lock_mutex(struct wdata *data)
 {
 	pthread_mutex_lock(&data->mutex);
 }
 
-void wdata_unlock_mutex(wdata_t * data)
+void wdata_unlock_mutex(struct wdata *data)
 {
 	pthread_mutex_unlock(&data->mutex);
 }

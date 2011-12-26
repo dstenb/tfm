@@ -37,8 +37,8 @@ void states_clear()
 		states_pop();
 }
 
-struct state *state_create(void (*keycmd) (wdata_t *, int),
-			   void (*mousecmd) (wdata_t *, const MEVENT *),
+struct state *state_create(void (*keycmd) (struct wdata *, int),
+			   void (*mousecmd) (struct wdata *, const MEVENT *),
 			   void (*activate) (void), int normal_bindings)
 {
 	struct state *s;
@@ -53,7 +53,7 @@ struct state *state_create(void (*keycmd) (wdata_t *, int),
 	return s;
 }
 
-void states_handlekey(wdata_t * data, int c)
+void states_handlekey(struct wdata *data, int c)
 {
 	int handled = 0;
 
@@ -75,7 +75,7 @@ void states_handlekey(wdata_t * data, int c)
 		c_node->state->keycmd(data, c);
 }
 
-void states_handlemouse(wdata_t * data, const MEVENT * event)
+void states_handlemouse(struct wdata *data, const MEVENT * event)
 {
 	if (!c_node)
 		return;

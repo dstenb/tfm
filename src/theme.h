@@ -1,13 +1,13 @@
 #ifndef _THEME_H_
 #define _THEME_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "utils.h"
 #include "ui.h"
+#include "utils.h"
 
 /* declare COLOR_DEFAULT if not set */
 #ifndef COLOR_DEFAULT
@@ -28,13 +28,11 @@ typedef enum {
 	C_SELECTED,
 } color_t;
 
-#define N_COLORS 9
-
 /* initialize the theme */
 void theme_init(void);
 
-/* read and set theme data from a file, 
+/* read and set theme data from a file,
  * returns 0 if successful, else errno */
-int theme_read_from_file(const char *path);
+int theme_read_from_file(const char *);
 
 #endif

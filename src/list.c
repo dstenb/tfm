@@ -1,13 +1,13 @@
 #include "list.h"
 
-static int cmd_chcmd(wdata_t *, const arg_t *);
-static void handle_mouse(wdata_t *, const MEVENT *);
-static void handle_key(wdata_t *, int);
+static int cmd_chcmd(struct wdata *, const struct arg *);
+static void handle_mouse(struct wdata *, const MEVENT *);
+static void handle_key(struct wdata *, int);
 
 struct {
 	int key;
-	int (*func) (wdata_t *, const arg_t *);
-	arg_t arg;
+	int (*func) (struct wdata *, const struct arg *);
+	struct arg arg;
 } list_cmds[] = {
 	{
 		13, cmd_action, {
@@ -45,7 +45,7 @@ struct state *list_state()
 	return state_create(handle_key, handle_mouse, NULL, 1);
 }
 
-void handle_key(wdata_t * data, int c)
+void handle_key(struct wdata *data, int c)
 {
 	int i;
 
@@ -57,9 +57,9 @@ void handle_key(wdata_t * data, int c)
 	}
 }
 
-void handle_mouse(wdata_t * data, const MEVENT * event)
+void handle_mouse(struct wdata *data, const MEVENT * event)
 {
-	arg_t arg;
+	struct arg arg;
 	int y, x;
 	getmaxyx(stdscr, y, x);
 
@@ -109,7 +109,7 @@ void handle_mouse(wdata_t * data, const MEVENT * event)
 	}
 }
 
-int cmd_chcmd(wdata_t * data, const arg_t * arg)
+int cmd_chcmd(struct wdata *data, const struct arg *arg)
 {
 	(void)data;
 	(void)arg;

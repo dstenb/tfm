@@ -1,11 +1,7 @@
 #include "theme.h"
 
-/* parse color, returns 1 if ok, else 0 */
-static int parse_color(const char *str, int *color);
-
-/* parses a theme line, returns 1 if ok, else 0 */
-static int parse_line(const char *path, int nr,
-		      char *line, int *id, int *fg, int *bg);
+static int parse_color(const char *, int *);
+static int parse_line(const char *, int, char *, int *, int *, int *);
 
 /* array for all theme data */
 struct {
@@ -57,6 +53,7 @@ struct {
 	"white", COLOR_WHITE}
 };
 
+/* parse color, returns 1 if ok, else 0 */
 int parse_color(const char *str, int *color)
 {
 	int i;
@@ -71,6 +68,7 @@ int parse_color(const char *str, int *color)
 	return 0;
 }
 
+/* parses a theme line, returns 1 if ok, else 0 */
 int parse_line(const char *path, int nr, char *line, int *id, int *fg, int *bg)
 {
 	char *name;

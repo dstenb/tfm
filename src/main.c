@@ -25,7 +25,7 @@ static void *update_loop(void *);
 static void usage(void);
 
 static char *cmdname = NULL;
-static wdata_t data;
+static struct wdata data;
 
 void atexit_handler()
 {
@@ -125,16 +125,16 @@ void update(struct dwindow *dwin)
 
 void *update_loop(void *v)
 {
-	wdata_t *data = v;
+	struct wdata *d = v;
 
 	for (;;) {
 		sleep(1);
 
-		wdata_lock_mutex(data);
-		update(data->win[0]);
-		update(data->win[1]);
-		draw(data);
-		wdata_unlock_mutex(data);
+		wdata_lock_mutex(d);
+		update(d->win[0]);
+		update(d->win[1]);
+		draw(d);
+		wdata_unlock_mutex(d);
 	}
 
 	return NULL;

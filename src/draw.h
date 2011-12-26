@@ -12,6 +12,6 @@
 #include "ui.h"
 #include "wdata.h"
 
-void draw(wdata_t * data);
+void draw(struct wdata *data);
 
 #endif

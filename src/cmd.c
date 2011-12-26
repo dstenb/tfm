@@ -2,32 +2,29 @@
 
 #define CMD_BUFSIZE 8092
 
-typedef struct cmd cmd;
-typedef struct ac_node ac_node;
-
 struct cmd {
 	char *name;
-	int (*func) (wdata_t * data, const arg_t * arg);
+	int (*func) (struct wdata * data, const struct arg * arg);
 };
 
 struct ac_node {
 	char *name;
-	ac_node *next;
+	struct ac_node *next;
 };
 
 static void activate(void);
-static void execute(wdata_t *);
-static void handle_key(wdata_t *, int);
+static void execute(struct wdata *);
+static void handle_key(struct wdata *, int);
 static void reset(void);
 
 static void autocomplete_clear(void);
-static void autocomplete_free(ac_node *);
-static ac_node *autocomplete_get(const char *);
+static void autocomplete_free(struct ac_node *);
+static struct ac_node *autocomplete_get(const char *);
 void autocomplete_handle(void);
 static void autocomplete_next(void);
 static void autocomplete_retrieve(void);
 
-static cmd cmds[] = {
+static struct cmd cmds[] = {
 	{"sh", cmd_shell},
 	{"quit", cmd_quit},
 	{"q", cmd_quit},
@@ -40,8 +37,8 @@ struct {
 } cmd_data;
 
 struct {
-	ac_node *node;
-	ac_node *curr;
+	struct ac_node *node;
+	struct ac_node *curr;
 } ac_data;
 
 void activate()
@@ -50,12 +47,12 @@ void activate()
 	set_message(M_INFO, ":%s", cmd_data.buf);
 }
 
-void execute(wdata_t * data)
+void execute(struct wdata *data)
 {
 	char tmp[CMD_BUFSIZE + 1];
 	char *name;
 	int i;
-	arg_t arg;
+	struct arg arg;
 
 	strcpy(tmp, cmd_data.buf);
 
@@ -94,9 +91,9 @@ void autocomplete_clear()
 }
 
 /* recursively free all nodes */
-void autocomplete_free(ac_node * node)
+void autocomplete_free(struct ac_node *node)
 {
-	ac_node *tmp;
+	struct ac_node *tmp;
 
 	while (node) {
 		tmp = node;
@@ -106,15 +103,15 @@ void autocomplete_free(ac_node * node)
 }
 
 /* get list of command names that begins with str */
-ac_node *autocomplete_get(const char *str)
+struct ac_node *autocomplete_get(const char *str)
 {
-	ac_node *node = NULL;
-	ac_node *tmp;
+	struct ac_node *node = NULL;
+	struct ac_node *tmp;
 	int i;
 
 	for (i = 0; i < ARRSIZE(cmds); i++) {
 		if (strncmp(cmds[i].name, str, strlen(str)) == 0) {
-			if (!(tmp = malloc(sizeof(ac_node))))
+			if (!(tmp = malloc(sizeof(struct ac_node))))
 				oom();
 			tmp->next = node;
 			tmp->name = cmds[i].name;
@@ -175,7 +172,7 @@ struct state *cmd_state()
 	return state_create(handle_key, NULL, activate, 0);
 }
 
-void handle_key(wdata_t * data, int c)
+void handle_key(struct wdata *data, int c)
 {
 	if (c == 27) {
 		reset();

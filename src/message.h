@@ -1,12 +1,12 @@
 #ifndef _MESSAGE_H_
 #define _MESSAGE_H_
 
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "ui.h"
 #include "theme.h"
+#include "ui.h"
 
 typedef enum {
 	M_INFO,
@@ -14,8 +14,8 @@ typedef enum {
 	M_ERROR
 } msg_t;
 
-void print_message(int y);
+void print_message(int);
 
-void set_message(msg_t type, const char *fmt, ...);
+void set_message(msg_t, const char *, ...);
 
 #endif

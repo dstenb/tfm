@@ -1,22 +1,21 @@
 #include "state.h"
 
-typedef struct snode snode;
-
 struct snode {
-	state *state;
-	snode *prev, *next;
+	struct state *state;
+	struct snode *prev, *next;
 };
 
-static snode *snode_create(state * s, snode * p, snode * n);
-static void snode_free(snode * sl);
+static struct snode *snode_create(struct state *, struct snode *,
+				  struct snode *);
+static void snode_free(struct snode *);
 
-static snode *c_node = NULL;
+static struct snode *c_node = NULL;
 
-snode *snode_create(state * s, snode * p, snode * n)
+struct snode *snode_create(struct state *s, struct snode *p, struct snode *n)
 {
-	snode *sl;
+	struct snode *sl;
 
-	if (!(sl = malloc(sizeof(snode))))
+	if (!(sl = malloc(sizeof(struct snode))))
 		oom();
 	sl->state = s;
 	sl->prev = p;
@@ -24,7 +23,7 @@ snode *snode_create(state * s, snode * p, snode * n)
 	return sl;
 }
 
-void snode_free(snode * sl)
+void snode_free(struct snode *sl)
 {
 	if (sl) {
 		free(sl->state);
@@ -36,6 +35,22 @@ void states_clear()
 {
 	while (c_node)
 		states_pop();
+}
+
+struct state *state_create(void (*keycmd) (wdata_t *, int),
+			   void (*mousecmd) (wdata_t *, const MEVENT *),
+			   void (*activate) (void), int normal_bindings)
+{
+	struct state *s;
+
+	if (!(s = malloc(sizeof(struct state))))
+		oom();
+	s->keycmd = keycmd;
+	s->mousecmd = mousecmd;
+	s->activate = activate;
+	s->normal_bindings = normal_bindings;
+
+	return s;
 }
 
 void states_handlekey(wdata_t * data, int c)
@@ -71,7 +86,7 @@ void states_handlemouse(wdata_t * data, const MEVENT * event)
 
 void states_pop()
 {
-	snode *tmp;
+	struct snode *tmp;
 
 	if (!c_node)
 		return;
@@ -84,7 +99,7 @@ void states_pop()
 		c_node->state->activate();
 }
 
-void states_push(state * s)
+void states_push(struct state *s)
 {
 	assert(s);
 	c_node = snode_create(s, c_node, NULL);

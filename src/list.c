@@ -40,17 +40,9 @@ struct {
 	0, 0}}
 };
 
-state *list_state()
+struct state *list_state()
 {
-	state *s;
-
-	if (!(s = malloc(sizeof(state))))
-		oom();
-	s->keycmd = handle_key;
-	s->mousecmd = handle_mouse;
-	s->activate = NULL;
-	s->normal_bindings = 1;
-	return s;
+	return state_create(handle_key, handle_mouse, NULL, 1);
 }
 
 void handle_key(wdata_t * data, int c)

@@ -9,6 +9,6 @@
 #include "dwindow.h"
 #include "state.h"
 
-state *list_state(void);
+struct state *list_state(void);
 
 #endif

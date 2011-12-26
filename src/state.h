@@ -11,25 +11,29 @@
 #include "utils.h"
 #include "wdata.h"
 
-typedef struct {
+struct state {
 	void (*keycmd) (wdata_t * data, int c);
 	void (*mousecmd) (wdata_t * data, const MEVENT * event);
 	void (*activate) (void);
 	int normal_bindings;
-} state;
+};
 
 /* remove all states */
 void states_clear(void);
 
-/* handle key event for current state */
-void states_handlekey(wdata_t * data, int c);
+struct state *state_create(void (*keycmd) (wdata_t *, int),
+			   void (*mousecmd) (wdata_t *, const MEVENT *),
+			   void (*activate) (void), int);
 
-void states_handlemouse(wdata_t * data, const MEVENT * event);
+/* handle key event for current state */
+void states_handlekey(wdata_t *, int);
+
+void states_handlemouse(wdata_t *, const MEVENT *);
 
 /* remove current satte */
 void states_pop(void);
 
 /* add and set state as current */
-void states_push(state * s);
+void states_push(struct state *);
 
 #endif

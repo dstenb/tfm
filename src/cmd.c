@@ -170,17 +170,9 @@ void autocomplete_retrieve()
 	}
 }
 
-state *cmd_state()
+struct state *cmd_state()
 {
-	state *s;
-
-	if (!(s = malloc(sizeof(state))))
-		die("out of memory\n");
-	s->keycmd = handle_key;
-	s->mousecmd = NULL;
-	s->activate = activate;
-	s->normal_bindings = 0;
-	return s;
+	return state_create(handle_key, NULL, activate, 0);
 }
 
 void handle_key(wdata_t * data, int c)

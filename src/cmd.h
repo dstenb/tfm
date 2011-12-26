@@ -9,6 +9,6 @@
 #include "message.h"
 #include "state.h"
 
-state *cmd_state(void);
+struct state *cmd_state(void);
 
 #endif

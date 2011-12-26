@@ -1,10 +1,12 @@
 #include "list.h"
 
-static int cmd_chcmd(wdata_t *data, const arg_t *arg);
+static int cmd_chcmd(wdata_t *, const arg_t *);
+static void handle_mouse(wdata_t *, const MEVENT *);
+static void handle_key(wdata_t *, int);
 
 struct {
 	int key;
-	int (*func)(wdata_t *data, const arg_t *arg);
+	int (*func)(wdata_t *, const arg_t *);
 	arg_t arg;
 } list_cmds[] = {
 	{ 13,  cmd_action,          { 0, 0 } },
@@ -27,18 +29,18 @@ state *
 list_state()
 {
 	state *s;
-	
+
 	if (!(s = malloc(sizeof(state))))
 		oom();
-	s->keycmd = list_handle_key;
-	s->mousecmd = list_handle_mouse;
+	s->keycmd = handle_key;
+	s->mousecmd = handle_mouse;
 	s->activate = NULL;
 	s->normal_bindings = 1;
 	return s;
 }
 
 void
-list_handle_key(wdata_t *data, int c)
+handle_key(wdata_t *data, int c)
 {
 	int i;
 
@@ -51,20 +53,54 @@ list_handle_key(wdata_t *data, int c)
 }
 
 void
-list_handle_mouse(wdata_t *data, const MEVENT *event)
+handle_mouse(wdata_t *data, const MEVENT *event)
 {
 	arg_t arg;
 	int y, x;
 	getmaxyx(stdscr, y, x);
 
-	if (data->view == V_SINGLE && data->wsel->path) {
+	if (!data->wsel->path)
+		return;
+
+	if (data->view == V_SINGLE) {
 		if (1 <= event->y && event->y <= (y - 2)) {
 			arg.i = data->wsel->start.i + event->y - 1;
 			cmd_set_selected(data, &arg);
 
-			if (event->bstate & BUTTON3_CLICKED) {
+			if (event->bstate & BUTTON3_CLICKED)
 				cmd_action(data, NULL);
-			}
+		}
+	} else if (data->view == V_VERTICAL) {
+		if (1 <= event->y && event->y <= (y - 2)) {
+			if ((wdata_sel_win_index(data) == 0 &&
+						(event->x > (x / 2))) ||
+					(wdata_sel_win_index(data) == 1 &&
+					 (event->x < (x / 2))))
+				cmd_toggle_win(data, NULL);
+
+			arg.i = data->wsel->start.i + event->y - 1;
+			cmd_set_selected(data, &arg);
+
+			if (event->bstate & BUTTON3_CLICKED)
+				cmd_action(data, NULL);
+		}
+	} else {
+		if (1 <= event->y && event->y < (y - 2) / 2) {
+			if (wdata_sel_win_index(data) == 1)
+				cmd_toggle_win(data, NULL);
+			arg.i = data->wsel->start.i + event->y - 1;
+			cmd_set_selected(data, &arg);
+
+			if (event->bstate & BUTTON3_CLICKED)
+				cmd_action(data, NULL);
+		} else if (event->y > (y - 2) / 2 && event->y <= (y - 2)) {
+			if (wdata_sel_win_index(data) == 0)
+				cmd_toggle_win(data, NULL);
+			arg.i = data->wsel->start.i + (event->y - (y / 2));
+			cmd_set_selected(data, &arg);
+
+			if (event->bstate & BUTTON3_CLICKED)
+				cmd_action(data, NULL);
 		}
 	}
 }
@@ -72,6 +108,9 @@ list_handle_mouse(wdata_t *data, const MEVENT *event)
 int
 cmd_chcmd(wdata_t *data, const arg_t *arg)
 {
+	(void)data;
+	(void)arg;
+
 	states_push(cmd_state());
 
 	return 1;

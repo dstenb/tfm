@@ -20,6 +20,15 @@ wdata_handle_resize(wdata_t *data)
 	}
 }
 
+int
+wdata_sel_win_index(wdata_t *data)
+{
+	if (data->wsel == data->win[0])
+		return 0;
+	else if (data->wsel == data->win[1])
+		return 1;
+	return -1;
+}
 
 void
 wdata_set_view(wdata_t *data, view_t view)

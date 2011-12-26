@@ -47,7 +47,8 @@ dwindow_fix_bounds(dwindow *dwin)
 	if (!(has_selected_file(dwin)))
 		return;
 
-	while((int)(dwin->sel.i - dwin->start.i) >=  dwin->winsize && dwin->start.p->next) {
+	while((int)(dwin->sel.i - dwin->start.i) >=  dwin->winsize &&
+			dwin->start.p->next) {
 		dwin->start.p = dwin->start.p->next;
 		dwin->start.i++;
 	}

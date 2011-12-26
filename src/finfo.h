@@ -14,8 +14,6 @@ enum {
 	SYMLINK = 1 << 1
 };
 
-typedef struct finfo finfo;
-
 struct finfo {
 	char *path;
 	char *name;
@@ -27,28 +25,28 @@ struct finfo {
 	gid_t gid;
 	off_t size;
 	time_t mtime;
-	finfo *prev;
-	finfo *next;
+	struct finfo *prev;
+	struct finfo *next;
 };
 
 /* sort comparison prototype */
-typedef int finfocmp(const finfo *, const finfo * b);
+typedef int finfocmp(const struct finfo *, const struct finfo *);
 
 /* create a finfo struct */
-finfo *finfo_create(const char *dir, const char *name);
+struct finfo *finfo_create(const char *, const char *);
 
 /* free a finfo struct */
-void finfo_free(finfo * fp);
+void finfo_free(struct finfo *fp);
 
 /* stat and fill data. returns 0 if successful, errno otherwise */
-int finfo_stat(finfo * fp);
+int finfo_stat(struct finfo *fp);
 
 /* comparison functions */
-int finfocmp_name(const finfo *, const finfo *);
-int finfocmp_size(const finfo *, const finfo *);
-int finfocmp_mtime(const finfo *, const finfo *);
+int finfocmp_name(const struct finfo *, const struct finfo *);
+int finfocmp_size(const struct finfo *, const struct finfo *);
+int finfocmp_mtime(const struct finfo *, const struct finfo *);
 
-/* returns a pointer to a statically allocated string for perm, 
+/* returns a pointer to a statically allocated string for perm,
  * returns NULL if bad perm */
 const char *strperm(int perm);
 

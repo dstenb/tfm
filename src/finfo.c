@@ -4,13 +4,13 @@ static const char *permstr[] = {
 	"---", "--x", "-w-", "-wx", "r--", "r-x", "rw-", "rwx"
 };
 
-finfo *finfo_create(const char *dir, const char *name)
+struct finfo *finfo_create(const char *dir, const char *name)
 {
 	size_t ds = strlen(dir);
 	size_t ns = strlen(name);
-	finfo *fp;
+	struct finfo *fp;
 
-	if (!(fp = calloc(1, sizeof(finfo))))
+	if (!(fp = calloc(1, sizeof(struct finfo))))
 		oom();
 
 	if (!(fp->name = strdup(name)))
@@ -24,7 +24,7 @@ finfo *finfo_create(const char *dir, const char *name)
 	return fp;
 }
 
-void finfo_free(finfo * fp)
+void finfo_free(struct finfo *fp)
 {
 	if (fp) {
 		free(fp->path);
@@ -33,7 +33,7 @@ void finfo_free(finfo * fp)
 	}
 }
 
-int finfo_stat(finfo * fp)
+int finfo_stat(struct finfo *fp)
 {
 	struct stat st;
 
@@ -57,12 +57,12 @@ int finfo_stat(finfo * fp)
 	return 0;
 }
 
-int finfocmp_name(const finfo * a, const finfo * b)
+int finfocmp_name(const struct finfo *a, const struct finfo *b)
 {
 	return strcmp(a->name, b->name);
 }
 
-int finfocmp_size(const finfo * a, const finfo * b)
+int finfocmp_size(const struct finfo *a, const struct finfo *b)
 {
 	if (a->size > b->size)
 		return 1;
@@ -72,7 +72,7 @@ int finfocmp_size(const finfo * a, const finfo * b)
 		return finfocmp_name(a, b);
 }
 
-int finfocmp_mtime(const finfo * a, const finfo * b)
+int finfocmp_mtime(const struct finfo *a, const struct finfo *b)
 {
 	if (a->mtime > b->mtime)
 		return 1;

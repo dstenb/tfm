@@ -1,12 +1,12 @@
 #include "draw.h"
 
-static void draw_dwin(WINDOW * win, dwindow * dwin, int selected);
-static int get_attr(const finfo * fp, int selected);
-static void print_file(WINDOW * win, const finfo * fp, int y, int w,
-		       int selected);
-static void print_filebar(const finfo * fp);
+static void draw_dwin(WINDOW *, struct dwindow *, int);
+static int get_attr(const struct finfo *, int);
+static void print_file(WINDOW *, const struct finfo *, int, int, int);
+static void print_filebar(const struct finfo *);
 
-void print_file(WINDOW * win, const finfo * fp, int y, int w, int selected)
+void print_file(WINDOW * win, const struct finfo *fp, int y, int w,
+		int selected)
 {
 	char buf[w / 2];
 	char *sstr;
@@ -29,7 +29,7 @@ void print_file(WINDOW * win, const finfo * fp, int y, int w, int selected)
 	free(sstr);
 }
 
-void print_filebar(const finfo * fp)
+void print_filebar(const struct finfo *fp)
 {
 	int y, x;
 	char *sstr;
@@ -61,7 +61,7 @@ void print_filebar(const finfo * fp)
 	}
 }
 
-int get_attr(const finfo * fp, int selected)
+int get_attr(const struct finfo *fp, int selected)
 {
 	if (selected)
 		return COLOR_PAIR(C_SELECTED) | A_BOLD;
@@ -72,9 +72,9 @@ int get_attr(const finfo * fp, int selected)
 	return COLOR_PAIR(C_FILE);
 }
 
-void draw_dwin(WINDOW * win, dwindow * dwin, int selected)
+void draw_dwin(WINDOW * win, struct dwindow *dwin, int selected)
 {
-	finfo *fp;
+	struct finfo *fp;
 	int i;
 	int y, x;
 

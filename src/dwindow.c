@@ -1,18 +1,18 @@
 #include "dwindow.h"
 
-static void dwindow_clear(dwindow * dwin);
-static void dwindow_prepend(dwindow * dwin, finfo * fp);
-static void dwindow_read_files(dwindow * dwin, DIR * dir);
+static void dwindow_clear(struct dwindow *dwin);
+static void dwindow_prepend(struct dwindow *dwin, struct finfo *fp);
+static void dwindow_read_files(struct dwindow *dwin, DIR * dir);
 
-static int finfo_cmp(finfo * a, finfo * b, finfocmp * cmp);
-static finfo *merge(finfo * a, finfo * b, finfocmp * cmp);
-static finfo *mergesort(finfo * head, finfocmp * cmp);
+static int finfo_cmp(struct finfo *a, struct finfo *b, finfocmp * cmp);
+static struct finfo *merge(struct finfo *a, struct finfo *b, finfocmp * cmp);
+static struct finfo *mergesort(struct finfo *head, finfocmp * cmp);
 
 static int valid_name(const char *name, int show_dot);
 
-void dwindow_clear(dwindow * dwin)
+void dwindow_clear(struct dwindow *dwin)
 {
-	finfo *t;
+	struct finfo *t;
 
 	while (dwin->files) {
 		t = dwin->files;
@@ -30,16 +30,16 @@ void dwindow_clear(dwindow * dwin)
 	free(dwin->path);
 }
 
-dwindow *dwindow_create()
+struct dwindow *dwindow_create()
 {
-	dwindow *dwin;
+	struct dwindow *dwin;
 
-	if (!(dwin = calloc(1, sizeof(dwindow))))
+	if (!(dwin = calloc(1, sizeof(struct dwindow))))
 		oom();
 	return dwin;
 }
 
-void dwindow_fix_bounds(dwindow * dwin)
+void dwindow_fix_bounds(struct dwindow *dwin)
 {
 	if (!(has_selected_file(dwin)))
 		return;
@@ -56,7 +56,7 @@ void dwindow_fix_bounds(dwindow * dwin)
 	}
 }
 
-void dwindow_free(dwindow * dwin)
+void dwindow_free(struct dwindow *dwin)
 {
 	if (dwin) {
 		dwindow_clear(dwin);
@@ -64,7 +64,7 @@ void dwindow_free(dwindow * dwin)
 	}
 }
 
-void dwindow_prepend(dwindow * dwin, finfo * fp)
+void dwindow_prepend(struct dwindow *dwin, struct finfo *fp)
 {
 	fp->next = dwin->files;
 
@@ -74,11 +74,11 @@ void dwindow_prepend(dwindow * dwin, finfo * fp)
 	dwin->size++;
 }
 
-int dwindow_read(dwindow * dwin, const char *path)
+int dwindow_read(struct dwindow *dwin, const char *path)
 {
 	DIR *dir;
 	char rpath[PATH_MAX];
-	finfo *fp;
+	struct finfo *fp;
 
 	realpath(path, rpath);
 
@@ -124,10 +124,10 @@ int dwindow_read(dwindow * dwin, const char *path)
 	return 0;
 }
 
-void dwindow_read_files(dwindow * dwin, DIR * dir)
+void dwindow_read_files(struct dwindow *dwin, DIR * dir)
 {
 	struct dirent *de;
-	finfo *fp;
+	struct finfo *fp;
 
 	while ((de = readdir(dir))) {
 		if (valid_name(de->d_name, dwin->show_dot)) {
@@ -142,7 +142,7 @@ void dwindow_read_files(dwindow * dwin, DIR * dir)
 	}
 }
 
-void dwindow_reload(dwindow * dwin)
+void dwindow_reload(struct dwindow *dwin)
 {
 	char *name = NULL;
 
@@ -162,10 +162,10 @@ void dwindow_reload(dwindow * dwin)
 	}
 }
 
-void dwindow_set_selected(dwindow * dwin, pos_t pos)
+void dwindow_set_selected(struct dwindow *dwin, pos_t pos)
 {
 	pos_t i;
-	finfo *t;
+	struct finfo *t;
 
 	if (!dwin->files)
 		return;
@@ -179,9 +179,9 @@ void dwindow_set_selected(dwindow * dwin, pos_t pos)
 	dwindow_fix_bounds(dwin);
 }
 
-int dwindow_set_selected_by_name(dwindow * dwin, const char *name)
+int dwindow_set_selected_by_name(struct dwindow *dwin, const char *name)
 {
-	finfo *fp;
+	struct finfo *fp;
 	pos_t i;
 
 	for (i = 0, fp = dwin->files; fp; i++, fp = fp->next) {
@@ -194,7 +194,7 @@ int dwindow_set_selected_by_name(dwindow * dwin, const char *name)
 	return 0;
 }
 
-void dwindow_set_sort(dwindow * dwin, int sort)
+void dwindow_set_sort(struct dwindow *dwin, int sort)
 {
 	if (sort >= 0 && sort < N_SORTMETHODS) {
 		dwin->sort = sort;
@@ -210,19 +210,19 @@ void dwindow_set_sort(dwindow * dwin, int sort)
 	}
 }
 
-void dwindow_set_winsize(dwindow * dwin, int winsize)
+void dwindow_set_winsize(struct dwindow *dwin, int winsize)
 {
 	dwin->winsize = winsize;
 	dwindow_fix_bounds(dwin);
 }
 
-void dwindow_show_dotfiles(dwindow * dwin, int show)
+void dwindow_show_dotfiles(struct dwindow *dwin, int show)
 {
 	dwin->show_dot = show;
 	dwindow_reload(dwin);
 }
 
-void dwindow_sort(dwindow * dwin)
+void dwindow_sort(struct dwindow *dwin)
 {
 	if (!dwin || !dwin->files || !dwin->files->next || !dwin->cmp)
 		return;
@@ -238,7 +238,7 @@ void dwindow_sort(dwindow * dwin)
 	dwindow_fix_bounds(dwin);
 }
 
-int finfo_cmp(finfo * a, finfo * b, finfocmp * cmp)
+int finfo_cmp(struct finfo *a, struct finfo *b, finfocmp * cmp)
 {
 	if (F_ISDIR(a) == F_ISDIR(b))
 		return cmp(a, b);
@@ -246,9 +246,9 @@ int finfo_cmp(finfo * a, finfo * b, finfocmp * cmp)
 		return F_ISDIR(a) ? -1 : 1;
 }
 
-finfo *merge(finfo * a, finfo * b, finfocmp * cmp)
+struct finfo *merge(struct finfo *a, struct finfo *b, finfocmp * cmp)
 {
-	finfo *res;
+	struct finfo *res;
 
 	if (!a)
 		return b;
@@ -267,10 +267,10 @@ finfo *merge(finfo * a, finfo * b, finfocmp * cmp)
 	return res;
 }
 
-finfo *mergesort(finfo * head, finfocmp * cmp)
+struct finfo *mergesort(struct finfo *head, finfocmp * cmp)
 {
-	finfo *a;
-	finfo *b;
+	struct finfo *a;
+	struct finfo *b;
 
 	if (!head || !head->next)
 		return head;

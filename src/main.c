@@ -20,8 +20,8 @@ static void atexit_handler(void);
 static void handle_resize(void);
 static void main_loop(void);
 static void read_config_files(void);
-static void update(dwindow * dwin);
-static void *update_loop(void *v);
+static void update(struct dwindow *);
+static void *update_loop(void *);
 static void usage(void);
 
 static char *cmdname = NULL;
@@ -108,7 +108,7 @@ void read_config_files()
 }
 
 /* reloads the dwindow if its been modified since last read */
-void update(dwindow * dwin)
+void update(struct dwindow *dwin)
 {
 	time_t otime;
 	int err;

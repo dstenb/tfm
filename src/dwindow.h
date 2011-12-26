@@ -18,16 +18,16 @@ typedef enum {
 	N_SORTMETHODS
 } sort_t;
 
-typedef struct {
+struct dwindow {
 	char *path;
-	finfo *dirinfo;
-	finfo *files;
+	struct finfo *dirinfo;
+	struct finfo *files;
 	struct {
-		finfo *p;
+		struct finfo *p;
 		pos_t i;
 	} sel;
 	struct {
-		finfo *p;
+		struct finfo *p;
 		pos_t i;
 	} start;
 	size_t size;
@@ -35,38 +35,38 @@ typedef struct {
 	int winsize;
 	finfocmp *cmp;
 	int show_dot;
-} dwindow;
+};
 
 /* create a dwindow struct */
-dwindow *dwindow_create(void);
+struct dwindow *dwindow_create(void);
 
 /* fix bounds so the start pointer is set correctly */
-void dwindow_fix_bounds(dwindow * dwin);
+void dwindow_fix_bounds(struct dwindow *);
 
 /* free a dwindow struct, and all it's data */
-void dwindow_free(dwindow * dwin);
+void dwindow_free(struct dwindow *);
 
 /* read a path. returns 0 if successful, or errno if not */
-int dwindow_read(dwindow * dwin, const char *path);
+int dwindow_read(struct dwindow *, const char *);
 
-void dwindow_reload(dwindow * dwin);
+void dwindow_reload(struct dwindow *);
 
 /* set selected finfo struct by pos */
-void dwindow_set_selected(dwindow * dwin, pos_t pos);
+void dwindow_set_selected(struct dwindow *, pos_t);
 
 /* set selected finfo struct by name. returns 1 if successful, else 0 */
-int dwindow_set_selected_by_name(dwindow * dwin, const char *name);
+int dwindow_set_selected_by_name(struct dwindow *, const char *);
 
 /* set sort method (and then sort) */
-void dwindow_set_sort(dwindow * dwin, int sort);
+void dwindow_set_sort(struct dwindow *, int);
 
 /* set window size and fix bounds */
-void dwindow_set_winsize(dwindow * dwin, int winsize);
+void dwindow_set_winsize(struct dwindow *, int);
 
-void dwindow_show_dotfiles(dwindow * dwin, int show);
+void dwindow_show_dotfiles(struct dwindow *, int);
 
 /* sorts the files */
-void dwindow_sort(dwindow * dwin);
+void dwindow_sort(struct dwindow *);
 
 const char *strsort(int sort);
 

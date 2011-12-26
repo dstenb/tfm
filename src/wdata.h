@@ -12,8 +12,8 @@ typedef enum {
 } view_t;
 
 typedef struct {
-	dwindow *win[2];
-	dwindow *wsel;
+	struct dwindow *win[2];
+	struct dwindow *wsel;
 	view_t view;
 	pthread_mutex_t mutex;
 } wdata_t;

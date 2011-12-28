@@ -1,0 +1,32 @@
+##############################
+# Example theme file for tfm #
+##############################
+
+# Syntax: [ID] = [Foreground] [Background]
+#
+# Available colors
+# default (terminal background color), black, red, green,
+# yellow, blue, magenta, cyan, white
+
+# Top bar
+topbar = white black
+
+# File information bar
+filebar = white black
+
+# Information bar
+info = white default
+warning = yellow default
+error = red default
+
+# Normal file
+file = white default
+
+# Selected file
+selected = white blue
+
+# Directory
+directory = blue default
+
+# Symlink
+symlink = green default

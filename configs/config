@@ -1,0 +1,34 @@
+######################################
+# Example configuration file for tfm #
+######################################
+
+# Path to theme file, either absolute or relative to ~/.tfm
+theme = theme
+
+# Path to program file, either absolute or relative to ~/.tfm
+programs = programs
+
+# Default program to fall back to
+default_program = vim
+
+# Whether or not dotfiles (hidden files) should be shown by default
+#
+# Arguments:
+# true / false
+show_dotfiles = true
+
+# Default sort method
+#
+# Arguments:
+# name       sort by file name
+# mtime      sort by modify time
+# size       sort by file size
+sort_by = name
+
+# Default view
+#
+# Arguments:
+# horizontal horizontal view
+# single     single window
+# vertical   vertical view
+view = vertical

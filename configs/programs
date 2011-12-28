@@ -1,0 +1,21 @@
+####################################################
+# Example configuration file for program launching #
+####################################################
+
+# Picture formats
+jpg = gimp
+png = gimp
+
+# Documents
+pdf = xpdf
+
+# Audio formats
+mp3 = mplayer
+
+# Video formats
+ogg = mplayer
+avi = mplayer
+mkv = mplayer
+
+# Etc
+exe = wine

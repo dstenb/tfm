@@ -10,6 +10,7 @@
 
 struct config {
 	char *default_program;
+	char *programs;
 	char *theme;
 	char *timefmt;
 	int show_dot;

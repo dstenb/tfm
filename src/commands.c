@@ -3,9 +3,13 @@
 int cmd_action(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
-	if (data->wsel->sel.p && F_ISDIR(data->wsel->sel.p)) {
-		dwindow_read(data->wsel, data->wsel->sel.p->path);
+	if (data->wsel->sel.p) {
+		if (F_ISDIR(data->wsel->sel.p))
+			dwindow_read(data->wsel, data->wsel->sel.p->path);
+		else
+			program_spawn(data->wsel->sel.p->path);
 	}
+
 
 	return 1;
 }

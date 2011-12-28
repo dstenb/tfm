@@ -11,6 +11,7 @@
 #include "dwindow.h"
 #include "list.h"
 #include "message.h"
+#include "program.h"
 #include "state.h"
 #include "theme.h"
 #include "ui.h"
@@ -30,6 +31,7 @@ static struct wdata data;
 void atexit_handler()
 {
 	config_close();
+	program_close();
 	ui_close();
 	states_clear();
 	dwindow_free(data.win[0]);
@@ -103,6 +105,21 @@ void read_config_files()
 			theme_read_from_file(path);
 		}
 
+		/* (try to) read program file */
+		if (config()->programs) {
+			if (*config()->programs == '/') {
+				snprintf(path, sizeof(path), "%s",
+					 config()->programs);
+			} else {
+				snprintf(path, sizeof(path), "%s/%s",
+					 confdir, config()->programs);
+			}
+
+			printf("program_read: %s\n", path);
+			program_read_from_file(path);
+
+		}
+
 		free(confdir);
 	}
 }
@@ -167,6 +184,7 @@ int main(int argc, char **argv)
 		die("couldn't set locale\n");
 
 	config_init();
+	program_init();
 	read_config_files();
 
 	/* setup windows */

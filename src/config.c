@@ -22,6 +22,8 @@ void config_init()
 		oom();
 	if (!(configuration.theme = strdup("theme")))
 		oom();
+	if (!(configuration.programs = strdup("programs")))
+		oom();
 
 	configuration.show_dot = 0;
 	configuration.sort = BY_NAME;
@@ -95,6 +97,10 @@ int config_read(const char *path)
 		} else if (streq(n, "theme")) {
 			free(configuration.theme);
 			if (!(configuration.theme = strdup(v)))
+				oom();
+		} else if (streq(n, "programs")) {
+			free(configuration.programs);
+			if (!(configuration.programs = strdup(v)))
 				oom();
 		} else {
 			die("%s:%i: unknown name '%s'\n", path, i, n);

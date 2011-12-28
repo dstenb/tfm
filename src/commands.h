@@ -6,6 +6,7 @@
 
 #include "dwindow.h"
 #include "message.h"
+#include "program.h"
 #include "wdata.h"
 
 /* common commands for various states */

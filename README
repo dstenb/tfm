@@ -1,0 +1,21 @@
+tfm
+===
+tfm - terminal file manager
+
+Configuration
+-------------
+tfm is configured with three files who all reside in ~/.tfm
+
+config - Main configuration file
+
+theme - Theme configuration file
+
+programs - Which programs to be associated with file extensions
+
+Installation
+------------
+Run the following to build and install:
+
+	make clean install
+
+

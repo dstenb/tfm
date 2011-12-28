@@ -3,19 +3,16 @@
 ####################################################
 
 # Picture formats
-jpg = gimp
-png = gimp
+jpg, jpeg,png = gimp
 
 # Documents
 pdf = xpdf
 
 # Audio formats
-mp3 = mplayer
+flac,ogg,mp3 = mplayer
 
 # Video formats
-ogg = mplayer
-avi = mplayer
-mkv = mplayer
+avi,mp4,mkv = mplayer
 
 # Etc
 exe = wine

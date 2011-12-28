@@ -63,8 +63,9 @@ void parse_line(const char *path, int nr, char *line)
 	char *ext;
 	char *cmd;
 
-	ext = strtok(line, " =\t\r\n");
-	cmd = strtok(NULL, " =\t\r\n");
+	ext = strtok(line, "=\t\r\n");
+	cmd = strtok(NULL, "=\t\r\n");
+	cmd = strtok(cmd, " ");
 
 	if (!ext || *ext == '#')
 		return;
@@ -72,6 +73,8 @@ void parse_line(const char *path, int nr, char *line)
 	if (!cmd || *cmd == '#')
 		die("%s:%i: missing value\n", path, nr);
 
-	printf("%s:%i: (%s) (%s)\n", path, nr, ext, cmd);
-	hm_put(program_hm, ext, strdup(cmd));
+	for (ext = strtok(ext, " ,"); ext; ext = strtok(NULL, " ,")) {
+		printf("%s:%i: (%s) (%s)\n", path, nr, ext, cmd);
+		hm_put(program_hm, ext, strdup(cmd));
+	}
 }

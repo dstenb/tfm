@@ -1,5 +1,5 @@
-#ifndef _HASHMAS_H_
-#define _HASHMAS_H_
+#ifndef _HASHMAP_H_
+#define _HASHMAP_H_
 
 #include <stdio.h>
 #include <stdlib.h>

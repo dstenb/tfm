@@ -15,10 +15,11 @@ unsigned int hashfunc(const struct hm * hm, const char *key)
 	return h % hm->size;
 }
 
-struct hm_node *hm_node_create(const char *key, void *data, struct hm_node * next)
+struct hm_node *hm_node_create(const char *key, void *data,
+		struct hm_node * next)
 {
 	struct hm_node *node;
-	
+
 	if (!(node = malloc(sizeof(struct hm_node))))
 		oom();
 	if (!(node->key = strdup(key)))

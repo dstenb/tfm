@@ -20,7 +20,7 @@ static void reset(void);
 static void autocomplete_clear(void);
 static void autocomplete_free(struct ac_node *);
 static struct ac_node *autocomplete_get(const char *);
-void autocomplete_handle(void);
+static void autocomplete_handle(void);
 static void autocomplete_next(void);
 static void autocomplete_retrieve(void);
 

@@ -101,7 +101,7 @@ void read_config_files()
 					 confdir, config()->theme);
 			}
 
-			printf("theme_read: %s\n", path);
+			/* printf("theme_read: %s\n", path); */
 			theme_read_from_file(path);
 		}
 
@@ -115,7 +115,7 @@ void read_config_files()
 					 confdir, config()->programs);
 			}
 
-			printf("program_read: %s\n", path);
+			/* printf("program_read: %s\n", path); */
 			program_read_from_file(path);
 
 		}

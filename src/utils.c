@@ -40,7 +40,7 @@ int spawn(char **argv, int foreground)
 		exit(1);
 	} else if (pid > 0) {
 		if (foreground)
-			waitpid(pid, NULL, 0);
+			while (waitpid(pid, NULL, 0) < 0 && errno == EINTR);
 		return 0;
 	} else {
 		return errno;

@@ -28,6 +28,7 @@ static struct cmd cmds[] = {
 	{"sh", cmd_shell},
 	{"quit", cmd_quit},
 	{"q", cmd_quit},
+	{"mkdir", cmd_mkdir},
 	{"cd", cmd_set_path}
 };
 

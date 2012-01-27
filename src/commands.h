@@ -36,6 +36,9 @@ int cmd_quit(struct wdata *, const struct arg *);
 /* set whether or not dotfiles should be shown for selected dwindow */
 int cmd_set_dotfiles(struct wdata *, const struct arg *);
 
+/* create a directory */
+int cmd_mkdir(struct wdata *, const struct arg *);
+
 /* set path for selected dwindow */
 int cmd_set_path(struct wdata *, const struct arg *);
 

@@ -49,6 +49,19 @@ int cmd_go_up(struct wdata *data, const struct arg *arg)
 	return 1;
 }
 
+int cmd_mkdir(struct wdata *data, const struct arg *arg)
+{
+	if (data->wsel->path && arg->s) {
+		if (chdir(data->wsel->path) || mkdir(arg->s, 0755)) {
+			set_message(M_ERROR, "couldn't create \"%s\" (%s)",
+					arg->s, strerror(errno));
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 int cmd_quit(struct wdata *data, const struct arg *arg)
 {
 	(void)data;

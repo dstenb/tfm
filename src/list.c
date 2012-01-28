@@ -1,120 +1,111 @@
 #include "list.h"
 
-static int cmd_chcmd(struct wdata *, const struct arg *);
-static void handle_mouse(struct wdata *, const MEVENT *);
-static void handle_key(struct wdata *, int);
+static struct list *create(struct list *, void *);
 
-struct {
-	int key;
-	int (*func) (struct wdata *, const struct arg *);
-	struct arg arg;
-} list_cmds[] = {
-	{
-		13, cmd_action, {
-	0, 0}}, {
-		258, cmd_go_down, {
-	0, 0}}, {
-		'j', cmd_go_down, {
-	0, 0}}, {
-		'G', cmd_go_end, {
-	0, 0}}, {
-		'g', cmd_go_home, {
-	0, 0}}, {
-		259, cmd_go_up, {
-	0, 0}}, {
-		'k', cmd_go_up, {
-	0, 0}}, {
-		'u', cmd_set_path, {
-	0, ".."}}, {
-		'H', cmd_toggle_dotfiles, {
-	0, 0}}, {
-		'S', cmd_toggle_sort, {
-	0, 0}}, {
-		'V', cmd_toggle_view, {
-	0, 0}}, {
-		' ', cmd_toggle_win, {
-	0, 0}}, {
-		't', cmd_toggle_win, {
-	0, 0}}, {
-		':', cmd_chcmd, {
-	0, 0}}
-};
-
-struct state *list_state()
+struct list *create(struct list *n, void *d)
 {
-	return state_create(handle_key, handle_mouse, NULL, 1);
+	struct list *l;
+
+	if (!(l = malloc(sizeof(struct list))))
+		oom();
+
+	l->data = d;
+	l->next = n;
+
+	return l;
 }
 
-void handle_key(struct wdata *data, int c)
+struct list *list_append(struct list *head, void *d)
+{
+	struct list *l;
+
+	if (head) {
+		for (l = head; l->next; l = l->next) ;
+		l->next = create(NULL, d);
+	} else {
+		head = create(NULL, d);
+	}
+
+	return head;
+}
+
+void list_foreach(struct list *head, void (*func) (void *))
+{
+	if (!func)
+		return;
+
+	for (; head; head = head->next)
+		func(head->data);
+}
+
+void list_free(struct list *head)
+{
+	struct list *tmp;
+
+	while (head) {
+		tmp = head;
+		head = head->next;
+		free(tmp);
+	}
+}
+
+void list_free_full(struct list *head, void (*func) (void *))
+{
+	struct list *tmp;
+
+	while (head) {
+		tmp = head;
+		head = head->next;
+		if (tmp->data && func)
+			func(tmp->data);
+		free(tmp);
+	}
+}
+
+int list_length(struct list *head)
 {
 	int i;
 
-	for (i = 0; i < ARRSIZE(list_cmds); i++) {
-		if (c == list_cmds[i].key) {
-			list_cmds[i].func(data, &list_cmds[i].arg);
-			break;
-		}
-	}
+	for (i = 0; head; head = head->next, i++) ;
+
+	return i;
 }
 
-void handle_mouse(struct wdata *data, const MEVENT * event)
+struct list *list_insert(struct list *head, void *d, int p)
 {
-	struct arg arg;
-	int y, x;
-	getmaxyx(stdscr, y, x);
+	struct list *l;
 
-	if (!data->wsel->path)
-		return;
-
-	if (data->view == V_SINGLE) {
-		if (1 <= event->y && event->y <= (y - 2)) {
-			arg.i = data->wsel->start.i + event->y - 1;
-			cmd_set_selected(data, &arg);
-
-			if (event->bstate & BUTTON3_CLICKED)
-				cmd_action(data, NULL);
-		}
-	} else if (data->view == V_VERTICAL) {
-		if (1 <= event->y && event->y <= (y - 2)) {
-			if ((wdata_sel_win_index(data) == 0 &&
-			     (event->x > (x / 2))) ||
-			    (wdata_sel_win_index(data) == 1 &&
-			     (event->x < (x / 2))))
-				cmd_toggle_win(data, NULL);
-
-			arg.i = data->wsel->start.i + event->y - 1;
-			cmd_set_selected(data, &arg);
-
-			if (event->bstate & BUTTON3_CLICKED)
-				cmd_action(data, NULL);
-		}
+	if (head && p != 0) {
+		for (l = head; l->next && p != 0; l = l->next, p--) ;
+		l->next = create(NULL, d);
 	} else {
-		if (1 <= event->y && event->y < (y - 2) / 2) {
-			if (wdata_sel_win_index(data) == 1)
-				cmd_toggle_win(data, NULL);
-			arg.i = data->wsel->start.i + event->y - 1;
-			cmd_set_selected(data, &arg);
-
-			if (event->bstate & BUTTON3_CLICKED)
-				cmd_action(data, NULL);
-		} else if (event->y > (y - 2) / 2 && event->y <= (y - 2)) {
-			if (wdata_sel_win_index(data) == 0)
-				cmd_toggle_win(data, NULL);
-			arg.i = data->wsel->start.i + (event->y - (y / 2));
-			cmd_set_selected(data, &arg);
-
-			if (event->bstate & BUTTON3_CLICKED)
-				cmd_action(data, NULL);
-		}
+		head = create(head, d);
 	}
+
+	return head;
 }
 
-int cmd_chcmd(struct wdata *data, const struct arg *arg)
+struct list *list_insert_sorted(struct list *head, void *d,
+				int (*cmp) (void *, void *))
 {
-	(void)data;
-	(void)arg;
+	struct list *l;
 
-	states_push(cmd_state());
+	if (!head || cmp(d, head->data) < 0)
+		return create(head, d);
 
-	return 1;
+	for (l = head; l->next && cmp(d, l->next->data) > 0; l = l->next) ;
+
+	l->next = create(l->next, d);
+
+	return head;
+}
+
+struct list *list_new(void *d)
+{
+	return create(NULL, d);
+}
+
+struct list *list_prepend(struct list *l, void *d)
+{
+	return create(l, d);
 }

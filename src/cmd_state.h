@@ -1,5 +1,5 @@
-#ifndef _COMMAND_H_
-#define _COMMAND_H_
+#ifndef _COMMAND_STATE_H_
+#define _COMMAND_STATE_H_
 
 #include <ctype.h>
 #include <stdio.h>

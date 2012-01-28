@@ -9,7 +9,7 @@
 #include "config.h"
 #include "draw.h"
 #include "dwindow.h"
-#include "list.h"
+#include "list_state.h"
 #include "message.h"
 #include "program.h"
 #include "state.h"

@@ -27,6 +27,7 @@ struct finfo {
 	time_t mtime;
 	struct finfo *prev;
 	struct finfo *next;
+	int marked;
 };
 
 /* sort comparison prototype */
@@ -36,10 +37,13 @@ typedef int finfocmp(const struct finfo *, const struct finfo *);
 struct finfo *finfo_create(const char *, const char *);
 
 /* free a finfo struct */
-void finfo_free(struct finfo *fp);
+void finfo_free(struct finfo *);
+
+/* free the given finfo struct and all the following ones */
+void finfo_free_all(struct finfo *);
 
 /* stat and fill data. returns 0 if successful, errno otherwise */
-int finfo_stat(struct finfo *fp);
+int finfo_stat(struct finfo *);
 
 /* comparison functions */
 int finfocmp_name(const struct finfo *, const struct finfo *);
@@ -48,6 +52,6 @@ int finfocmp_mtime(const struct finfo *, const struct finfo *);
 
 /* returns a pointer to a statically allocated string for perm,
  * returns NULL if bad perm */
-const char *strperm(int perm);
+const char *strperm(int);
 
 #endif

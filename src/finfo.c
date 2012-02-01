@@ -33,6 +33,17 @@ void finfo_free(struct finfo *fp)
 	}
 }
 
+void finfo_free_all(struct finfo *fp)
+{
+	struct finfo *tmp;
+
+	while (fp) {
+		tmp = fp;
+		fp = fp->next;
+		finfo_free(tmp);
+	}
+}
+
 int finfo_stat(struct finfo *fp)
 {
 	struct stat st;

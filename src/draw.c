@@ -14,15 +14,16 @@ void print_file(WINDOW * win, const struct finfo *fp, int y, int w,
 	int attr = get_attr(fp, selected);
 
 	if (F_ISDIR(fp))
-		snprintf(buf, w / 2, " %s/", fp->name);
+		snprintf(buf, w / 2, "%s/", fp->name);
 	else
-		snprintf(buf, w / 2, " %s", fp->name);
+		snprintf(buf, w / 2, "%s", fp->name);
 
 	strftime(timestr, sizeof(timestr), config()->timefmt,
 		 localtime(&fp->mtime));
 	sstr = strsize(fp->size);
 
-	ui_printline(win, y, attr, "%*s %*s %*s", -(w / 2) + 1, buf,
+	ui_printline(win, y, attr, "%c %*s %*s %*s",
+			fp->marked ? 'm' : ' ',	-(w / 2) + 1, buf,
 		     (w / 4) - 1, sstr, (w / 4) - 1, timestr);
 
 	free(sstr);

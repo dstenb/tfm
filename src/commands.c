@@ -197,3 +197,33 @@ int cmd_toggle_win(struct wdata *data, const struct arg *arg)
 
 	return 1;
 }
+
+int cmd_mark_deselect_all(struct wdata *data, const struct arg *arg)
+{
+	struct finfo *fp;
+
+	for (fp = data->wsel->files; fp; fp = fp->next)
+		fp->marked = 0;
+}
+
+int cmd_mark_select_all(struct wdata *data, const struct arg *arg)
+{
+	struct finfo *fp;
+
+	for (fp = data->wsel->files; fp; fp = fp->next)
+		fp->marked = 1;
+}
+
+int cmd_mark_toggle(struct wdata *data, const struct arg *arg)
+{
+	if (data->wsel->sel.p)
+		data->wsel->sel.p->marked ^= 1;
+}
+
+int cmd_mark_invert(struct wdata *data, const struct arg *arg)
+{
+	struct finfo *fp;
+
+	for (fp = data->wsel->files; fp; fp = fp->next)
+		fp->marked ^= 1;
+}

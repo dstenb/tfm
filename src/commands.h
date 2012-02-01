@@ -73,4 +73,9 @@ int cmd_toggle_view(struct wdata *, const struct arg *);
 /* toggle selected window */
 int cmd_toggle_win(struct wdata *, const struct arg *);
 
+int cmd_mark_deselect_all(struct wdata *, const struct arg *);
+int cmd_mark_select_all(struct wdata *, const struct arg *);
+int cmd_mark_toggle(struct wdata *, const struct arg *);
+int cmd_mark_invert(struct wdata *, const struct arg *);
+
 #endif

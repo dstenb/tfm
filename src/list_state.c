@@ -6,7 +6,7 @@ static void handle_key(struct wdata *, int);
 
 struct {
 	int key;
-	int (*func) (struct wdata *, const struct arg *);
+	void (*func) (struct wdata *, const struct arg *);
 	struct arg arg;
 } list_cmds[] = {
 	{ 13,  cmd_action,            { 0, 0 } },

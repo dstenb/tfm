@@ -1,25 +1,25 @@
 #include "dwindow.h"
 
-static void dwindow_clear(struct dwindow *dwin);
-static void dwindow_prepend(struct dwindow *dwin, struct finfo *fp);
-static void dwindow_read_files(struct dwindow *dwin, DIR * dir);
+static void dwindow_clear(struct dwindow *, struct finfo **);
+static void dwindow_fix_finfo_data(struct finfo *, struct finfo *);
+static void dwindow_prepend(struct dwindow *, struct finfo *);
+static void dwindow_read_files(struct dwindow *, DIR *);
 
-static int finfo_cmp(struct finfo *a, struct finfo *b, finfocmp * cmp);
-static struct finfo *merge(struct finfo *a, struct finfo *b, finfocmp * cmp);
-static struct finfo *mergesort(struct finfo *head, finfocmp * cmp);
+static int finfo_cmp(struct finfo *, struct finfo *, finfocmp *);
+static struct finfo *merge(struct finfo *, struct finfo *, finfocmp *);
+static struct finfo *mergesort(struct finfo *, finfocmp *);
 
-static int valid_name(const char *name, int show_dot);
+static int valid_name(const char *, int);
 
-void dwindow_clear(struct dwindow *dwin)
+void dwindow_clear(struct dwindow *dwin, struct finfo **files)
 {
-	struct finfo *t;
-
-	while (dwin->files) {
-		t = dwin->files;
-		dwin->files = dwin->files->next;
-		finfo_free(t);
+	if (files) {
+		*files = dwin->files;
+	} else {
+		finfo_free_all(dwin->files);
 	}
 
+	dwin->files = NULL;
 	dwin->size = 0;
 	dwin->sel.p = NULL;
 	dwin->sel.i = 0;
@@ -59,7 +59,7 @@ void dwindow_fix_bounds(struct dwindow *dwin)
 void dwindow_free(struct dwindow *dwin)
 {
 	if (dwin) {
-		dwindow_clear(dwin);
+		dwindow_clear(dwin, NULL);
 		free(dwin);
 	}
 }
@@ -79,6 +79,7 @@ int dwindow_read(struct dwindow *dwin, const char *path)
 	DIR *dir;
 	char rpath[PATH_MAX];
 	struct finfo *fp;
+	struct finfo *old_files = NULL;
 
 	realpath(path, rpath);
 
@@ -93,7 +94,10 @@ int dwindow_read(struct dwindow *dwin, const char *path)
 		return errno;
 	}
 
-	dwindow_clear(dwin);
+	if (dwin->path && streq(dwin->path, rpath))
+		dwindow_clear(dwin, &old_files);
+	else
+		dwindow_clear(dwin, NULL);
 
 	if (!(dwin->path = strdup(rpath)))
 		oom();
@@ -121,7 +125,29 @@ int dwindow_read(struct dwindow *dwin, const char *path)
 	dwin->start.p = dwin->files;
 	dwin->sel.i = dwin->start.i = 0;
 
+	/* reload finfo data if reloading a directory */
+	if (old_files) {
+		dwindow_fix_finfo_data(old_files, dwin->files);
+		finfo_free_all(old_files);
+	}
+
 	return 0;
+}
+
+void dwindow_fix_finfo_data(struct finfo *old, struct finfo *new)
+{
+	struct finfo *tmp;
+
+	for ( ; old; old = old->next) {
+		for (tmp = new; tmp; tmp = tmp->next) {
+			int cmp = strcmp(old->name, tmp->name);
+
+			if (cmp == 0) {
+				tmp->marked = old->marked;
+				break;
+			}
+		}
+	}
 }
 
 void dwindow_read_files(struct dwindow *dwin, DIR * dir)

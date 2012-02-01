@@ -16,6 +16,7 @@ struct arg {
 	char *s;
 };
 
+/* open file or directory */
 int cmd_action(struct wdata *, const struct arg *);
 
 /* go down one entry in dselected dwindow */
@@ -30,14 +31,14 @@ int cmd_go_home(struct wdata *, const struct arg *);
 /* go up one entry in the selected dwindow */
 int cmd_go_up(struct wdata *, const struct arg *);
 
+/* create a directory */
+int cmd_mkdir(struct wdata *, const struct arg *);
+
 /* quit program */
 int cmd_quit(struct wdata *, const struct arg *);
 
 /* set whether or not dotfiles should be shown for selected dwindow */
 int cmd_set_dotfiles(struct wdata *, const struct arg *);
-
-/* create a directory */
-int cmd_mkdir(struct wdata *, const struct arg *);
 
 /* set path for selected dwindow */
 int cmd_set_path(struct wdata *, const struct arg *);
@@ -57,6 +58,7 @@ int cmd_set_view(struct wdata *, const struct arg *);
 /* set selected window */
 int cmd_set_win(struct wdata *, const struct arg *);
 
+/* spawn a shell in the current directory */
 int cmd_shell(struct wdata *, const struct arg *);
 
 /* toggle if dotfiles should be shown for selected dwindow */

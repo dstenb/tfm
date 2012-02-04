@@ -4,7 +4,7 @@
 
 struct cmd {
 	char *name;
-	int (*func) (struct wdata * data, const struct arg * arg);
+	void (*func) (struct wdata *, const struct arg *);
 };
 
 struct ac_node {

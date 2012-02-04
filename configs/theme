@@ -30,3 +30,7 @@ directory = blue default
 
 # Symlink
 symlink = green default
+
+# Marked file / directory
+marked = red default
+marked_selected = red blue

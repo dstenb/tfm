@@ -174,7 +174,8 @@ void cmd_mark_deselect_all(struct wdata *data, const struct arg *arg)
 	(void)arg;
 
 	for (fp = data->wsel->files; fp; fp = fp->next)
-		fp->marked = 0;
+		if (!streq(fp->name, ".."))
+			fp->marked = 0;
 }
 
 void cmd_mark_select_all(struct wdata *data, const struct arg *arg)
@@ -183,13 +184,14 @@ void cmd_mark_select_all(struct wdata *data, const struct arg *arg)
 	(void)arg;
 
 	for (fp = data->wsel->files; fp; fp = fp->next)
-		fp->marked = 1;
+		if (!streq(fp->name, ".."))
+			fp->marked = 1;
 }
 
 void cmd_mark_toggle(struct wdata *data, const struct arg *arg)
 {
 	(void)arg;
-	if (data->wsel->sel.p)
+	if (data->wsel->sel.p && !streq(data->wsel->sel.p->name, ".."))
 		data->wsel->sel.p->marked ^= 1;
 }
 
@@ -199,5 +201,6 @@ void cmd_mark_invert(struct wdata *data, const struct arg *arg)
 	(void)arg;
 
 	for (fp = data->wsel->files; fp; fp = fp->next)
-		fp->marked ^= 1;
+		if (!streq(fp->name, ".."))
+			fp->marked ^= 1;
 }

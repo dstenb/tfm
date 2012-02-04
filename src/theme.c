@@ -7,16 +7,17 @@ static int parse_line(const char *, int, char *, int *, int *, int *);
 struct {
 	int id, fg, bg;
 } c_data[] = {
-	{
-	C_TOPBAR, COLOR_WHITE, COLOR_DEFAULT}, {
-	C_FILEBAR, COLOR_BLACK, COLOR_WHITE}, {
-	C_INFO, COLOR_WHITE, COLOR_DEFAULT}, {
-	C_WARNING, COLOR_YELLOW, COLOR_DEFAULT}, {
-	C_ERROR, COLOR_RED, COLOR_DEFAULT}, {
-	C_FILE, COLOR_WHITE, COLOR_DEFAULT}, {
-	C_DIRECTORY, COLOR_BLUE, COLOR_DEFAULT}, {
-	C_SYMLINK, COLOR_GREEN, COLOR_DEFAULT}, {
-	C_SELECTED, COLOR_WHITE, COLOR_BLUE}
+	{ C_TOPBAR, COLOR_WHITE, COLOR_DEFAULT },
+	{ C_FILEBAR, COLOR_BLACK, COLOR_WHITE },
+	{ C_INFO, COLOR_WHITE, COLOR_DEFAULT },
+	{ C_WARNING, COLOR_YELLOW, COLOR_DEFAULT },
+	{ C_ERROR, COLOR_RED, COLOR_DEFAULT },
+	{ C_FILE, COLOR_WHITE, COLOR_DEFAULT },
+	{ C_DIRECTORY, COLOR_BLUE, COLOR_DEFAULT },
+	{ C_SYMLINK, COLOR_GREEN, COLOR_DEFAULT },
+	{ C_SELECTED, COLOR_WHITE, COLOR_BLUE },
+	{ C_MARKED, COLOR_RED, COLOR_DEFAULT },
+	{ C_MARKED_SELECTED, COLOR_RED, COLOR_BLUE }
 };
 
 /* color_t lookup table */
@@ -24,16 +25,17 @@ struct {
 	char *name;
 	int v;
 } c_identifiers[] = {
-	{
-	"topbar", C_TOPBAR}, {
-	"filebar", C_FILEBAR}, {
-	"info", C_INFO}, {
-	"warning", C_WARNING}, {
-	"error", C_ERROR}, {
-	"file", C_FILE}, {
-	"directory", C_DIRECTORY}, {
-	"symlink", C_SYMLINK}, {
-	"selected", C_SELECTED}
+	{ "topbar", C_TOPBAR },
+	{ "filebar", C_FILEBAR },
+	{ "info", C_INFO },
+	{ "warning", C_WARNING },
+	{ "error", C_ERROR },
+	{ "file", C_FILE },
+	{ "directory", C_DIRECTORY },
+	{ "symlink", C_SYMLINK },
+	{ "selected", C_SELECTED },
+	{ "marked", C_MARKED },
+	{ "marked_selected", C_MARKED_SELECTED }
 };
 
 /* color lookup table */
@@ -41,16 +43,15 @@ struct {
 	char *name;
 	int v;
 } c_dictionary[] = {
-	{
-	"default", COLOR_DEFAULT}, {
-	"black", COLOR_BLACK}, {
-	"red", COLOR_RED}, {
-	"green", COLOR_GREEN}, {
-	"yellow", COLOR_YELLOW}, {
-	"blue", COLOR_BLUE}, {
-	"magenta", COLOR_MAGENTA}, {
-	"cyan", COLOR_CYAN}, {
-	"white", COLOR_WHITE}
+	{ "default", COLOR_DEFAULT },
+	{ "black", COLOR_BLACK },
+	{ "red", COLOR_RED },
+	{ "green", COLOR_GREEN },
+	{ "yellow", COLOR_YELLOW },
+	{ "blue", COLOR_BLUE },
+	{ "magenta", COLOR_MAGENTA },
+	{ "cyan", COLOR_CYAN },
+	{ "white", COLOR_WHITE}
 };
 
 /* parse color, returns 1 if ok, else 0 */

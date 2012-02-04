@@ -22,8 +22,7 @@ void print_file(WINDOW * win, const struct finfo *fp, int y, int w,
 		 localtime(&fp->mtime));
 	sstr = strsize(fp->size);
 
-	ui_printline(win, y, attr, "%c %*s %*s %*s",
-			fp->marked ? 'm' : ' ',	-(w / 2) + 1, buf,
+	ui_printline(win, y, attr, " %*s %*s %*s", -(w / 2) + 1, buf,
 		     (w / 4) - 1, sstr, (w / 4) - 1, timestr);
 
 	free(sstr);
@@ -63,7 +62,10 @@ void print_filebar(const struct finfo *fp)
 
 int get_attr(const struct finfo *fp, int selected)
 {
-	if (selected)
+	if (fp->marked)
+		return selected ? COLOR_PAIR(C_MARKED_SELECTED) | A_BOLD :
+			COLOR_PAIR(C_MARKED);
+	else if (selected)
 		return COLOR_PAIR(C_SELECTED) | A_BOLD;
 	else if (F_ISDIR(fp))
 		return COLOR_PAIR(C_DIRECTORY) | A_BOLD;

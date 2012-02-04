@@ -190,9 +190,13 @@ void cmd_mark_select_all(struct wdata *data, const struct arg *arg)
 
 void cmd_mark_toggle(struct wdata *data, const struct arg *arg)
 {
+	struct arg parg;
+
 	(void)arg;
 	if (data->wsel->sel.p && !streq(data->wsel->sel.p->name, ".."))
 		data->wsel->sel.p->marked ^= 1;
+	parg.i = 1;
+	cmd_set_selected_r(data, &parg);
 }
 
 void cmd_mark_invert(struct wdata *data, const struct arg *arg)
